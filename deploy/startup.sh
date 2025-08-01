@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -ex
 
 echo "Starting startup script..."
 
@@ -58,6 +58,7 @@ python manage.py collectstatic --noinput
 
 # Iniciar Gunicorn
 log_message "Starting Gunicorn..."
+python manage.py check
 exec gunicorn Corpus2026.wsgi:application \
     --bind 0.0.0.0:${PORT:-8080} \
     --workers 2 \
