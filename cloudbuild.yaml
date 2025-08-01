@@ -1,65 +1,27 @@
 steps:
-# Paso 1: Obtener secretos desde Secret Manager
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'verify-secrets'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Obteniendo secretos..."
-      echo "$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/secret_key
-      echo "$(gcloud secrets versions access latest --secret=DB_NAME)" > /workspace/db_name
-      echo "$(gcloud secrets versions access latest --secret=DB_USER)" > /workspace/db_user
-      echo "$(gcloud secrets versions access latest --secret=DB_PASSWORD)" > /workspace/db_password
-      echo "$(gcloud secrets versions access latest --secret=DB_HOST)" > /workspace/db_host
-      echo "$(gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY)" > /workspace/stripe_secret
-      echo "$(gcloud secrets versions access latest --secret=STRIPE_PUBLISHABLE_KEY)" > /workspace/stripe_public
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/testapp:$COMMIT_SHA',
+      '.'
+    ]
 
-# Paso 2: Construir la imagen
-- name: 'gcr.io/cloud-builders/docker'
-  id: 'build'
-  waitFor: ['verify-secrets']
-  args: [
-    'build',
-    '-t', 'gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA',
-    '.'
-  ]
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'push',
+      'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/testapp:$COMMIT_SHA'
+    ]
 
-# Paso 3: Subir la imagen a Container Registry (GCR)
-- name: 'gcr.io/cloud-builders/docker'
-  id: 'push'
-  waitFor: ['build']
-  args: [
-    'push',
-    'gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA'
-  ]
-
-# Paso 4: Desplegar a Cloud Run con variables de entorno
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  id: 'deploy'
-  waitFor: ['push']
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Desplegando a Cloud Run..."
-      secret_key=$(cat /workspace/secret_key)
-      db_name=$(cat /workspace/db_name)
-      db_user=$(cat /workspace/db_user)
-      db_password=$(cat /workspace/db_password)
-      db_host=$(cat /workspace/db_host)
-      stripe_secret=$(cat /workspace/stripe_secret)
-      stripe_public=$(cat /workspace/stripe_public)
-
-      gcloud run deploy corpus2026 \
-        --image gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA \
-        --region=europe-west1 \
-        --platform=managed \
-        --allow-unauthenticated \
-        --add-cloudsql-instances=corpus-451314:europe-southwest1:corpus-2026 \
-        --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False"
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run deploy testapp \
+          --image=europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/testapp:$COMMIT_SHA \
+          --platform=managed \
+          --region=europe-west1 \
+          --allow-unauthenticated
 
 options:
-  logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
-
-serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
+  logging: CLOUD_LOGGING_ONLY
