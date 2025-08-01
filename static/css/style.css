@@ -1,0 +1,101 @@
+.corpus-title {
+  font-family: 'Ibarra Real Nova', serif;
+  color: #024c57;
+  font-weight: 700;
+}
+
+.corpus-nav-link {
+  font-family: 'Ibarra Real Nova', serif;
+  color: #024c57;
+  font-weight: 600;
+  margin-left: 1rem;
+  font-size: 1.5rem;
+  position: relative;
+  color: #024c57; /* tu color institucional */
+  padding: 0.1rem 0;
+}
+
+.corpus-nav-link:hover {
+  color: #01616d;
+}
+.corpus-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 2px;
+  background-color: #024c57;
+  transition: width 0.3s ease, left 0.3s ease;
+}
+
+.corpus-nav-link:hover::after {
+  width: 100%;
+  left: 0;
+}
+.corpus-login-btn {
+  font-weight: 600;
+  color: #024c57;
+  border-color: #024c57;
+}
+
+.corpus-login-btn:hover {
+  background-color: rgba(2,76,87,0.5);
+  color: white;
+}
+
+.corpus-registro-btn {
+  font-weight: 600;
+  background-color: #024c57;
+  color: white;
+}
+
+.corpus-registro-btn:hover {
+  background-color: rgba(2,76,87,0.5);
+  color: white;
+  border-color: #024c57;
+}
+
+.corpus-navbar-container {
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.navbar {
+  background-color: #fbfbfc !important;
+}
+
+.section-timeline {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+.section-timeline.even {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.section-timeline h3 {
+  color: #024c57;
+  font-family: 'Ibarra Real Nova', serif;
+}
+form input {
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+}
+
+.card-body h2 {
+  font-family: 'Ibarra Real Nova', serif;
+  font-weight: bold;
+}
+.text-corpus {
+  color: #024c57;
+  font-family: 'Ibarra Real Nova', serif;
+}
+
+.icon-xl {
+  width: 64px;
+  height: 64px;
+}

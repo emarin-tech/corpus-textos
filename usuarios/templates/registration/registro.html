@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Registrarse | Corpus{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow p-4" style="width: 100%; max-width: 420px; border-radius: 12px;">
+    <h2 class="text-center mb-4" style="color: #024c57;">Crear una cuenta</h2>
+
+    <form method="post" action="{% url 'usuarios:registro' %}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_email" class="form-label">Correo electrónico</label>
+        <input type="email" name="email" class="form-control" id="id_email" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_password1" class="form-label">Contraseña</label>
+        <input type="password" name="password1" class="form-control" id="id_password1" required>
+      </div>
+
+      <div class="mb-3">
+        <label for="id_password2" class="form-label">Repite la contraseña</label>
+        <input type="password" name="password2" class="form-control" id="id_password2" required>
+      </div>
+
+      <div class="d-grid mb-3">
+        <button type="submit" class="btn" style="background-color: #024c57; color: white;">Registrarse</button>
+      </div>
+    </form>
+
+    <div class="text-center my-3 text-muted">O regístrate con</div>
+
+    <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-outline-dark w-100 mb-2 d-flex align-items-center justify-content-center gap-2">
+      <img src="{% static 'img/google.svg' %}" alt="Google" width="20">
+      Google
+    </a>
+
+    <p class="text-center mt-3">
+      ¿Ya tienes cuenta?
+      <a href="{% url 'login' %}">Inicia sesión</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

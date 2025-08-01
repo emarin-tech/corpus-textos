@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Iniciar sesión | Corpus{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+          <h2 class="text-center mb-4" style="color: #024c57;">Iniciar sesión</h2>
+
+          <form method="post" action="{% url 'login' %}">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="mb-3 row align-items-center">
+    <label for="id_username" class="col-sm-4 col-form-label text-end">Correo electrónico</label>
+    <div class="col-sm-8">
+      {{ form.username }}
+    </div>
+  </div>
+
+  <div class="mb-4 row align-items-center">
+    <label for="id_password" class="col-sm-4 col-form-label text-end">Contraseña</label>
+    <div class="col-sm-8">
+      {{ form.password }}
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="text-center mt-3">
+      <button type="submit" class="btn w-100 text-white" style="background-color: #024c57;">Entrar</button>
+    </div>
+  </div>
+</form>
+
+          <div class="my-3 text-center text-muted">O inicia sesión con</div>
+
+          <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-2">
+            <img src="{% static 'img/google.svg' %}" alt="Google" width="20" height="20">
+            <span>Google</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

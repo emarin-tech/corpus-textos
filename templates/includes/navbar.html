@@ -1,0 +1,38 @@
+{% load static %}
+<!-- templates/includes/navbar.html -->
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-2">
+  <div class="container">
+    <!-- Logo con imagen -->
+    <a class="navbar-brand" href="/">
+      <img src="{% static 'img/logo.png' %}" alt="Corpus" height="70">
+    </a>
+
+    <!-- Botón móvil -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCorpus" aria-controls="navbarCorpus" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Enlaces -->
+    <div class="collapse navbar-collapse" id="navbarCorpus">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item mx-3">
+          <a class="corpus-nav-link nav-link text-corpus" href="">Qué es Corpus</a>
+        </li>
+        <li class="nav-item mx-3">
+          <a class="corpus-nav-link nav-link text-corpus" href="">Funcionalidades</a>
+        </li>
+        <li class="nav-item mx-3">
+          <a class="corpus-nav-link nav-link text-corpus" href="">Precios</a>
+        </li>
+        <li class="nav-item mx-3">
+          <a class="corpus-nav-link nav-link text-corpus" href="">Ayuda</a>
+        </li>
+      </ul>
+
+      <div class="d-flex">
+        <a href="{% url 'login' %}" class="btn btn-outline-corpus me-2 corpus-login-btn">Iniciar sesión</a>
+        <a href="{% url 'registro' %}" class="btn btn-corpus corpus-registro-btn ">Pruébalo gratis</a>
+      </div>
+    </div>
+  </div>
+</nav>
