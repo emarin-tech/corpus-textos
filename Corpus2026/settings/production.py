@@ -4,7 +4,7 @@ from google.cloud import secretmanager
 
 # Inicializa el cliente de Secret Manager
 client = secretmanager.SecretManagerServiceClient()
-
+ALLOWED_HOSTS = ['*']
 # Tu ID del proyecto en GCP
 GCP_PROJECT_ID = os.getenv('corpus-451314')
 
@@ -30,6 +30,8 @@ STRIPE_SECRET_KEY = get_secret('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = get_secret('STRIPE_PUBLISHABLE_KEY')
 
 # Archivos estáticos y media
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATICFILES_DIRS = [BASE_DIR.parent / 'static']
