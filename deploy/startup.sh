@@ -59,7 +59,7 @@ python manage.py collectstatic --noinput
 # Iniciar Gunicorn
 log_message "Starting Gunicorn..."
 exec gunicorn corpus.wsgi:application \
-    --bind 0.0.0.0:$PORT \
+    --bind 0.0.0.0:${PORT:-8080} \
     --workers 2 \
     --threads 4 \
     --timeout 0 \
