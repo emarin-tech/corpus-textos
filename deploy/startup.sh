@@ -2,6 +2,7 @@
 set -ex
 
 echo "Starting startup script..."
+echo "🔥 startup.sh comenzando..." >&2
 
 # Configuración
 INSTANCE_CONNECTION_NAME="corpus-451314:europe-southwest1:corpus-2026"
