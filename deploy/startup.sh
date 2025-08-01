@@ -14,7 +14,7 @@ log() {
 
 # Iniciar Cloud SQL Proxy solo si se necesita
 log "🔌 Starting Cloud SQL Proxy..."
-/usr/local/cloud_sql_proxy -instances=$INSTANCE_CONNECTION_NAME=tcp:$DB_PORT &
+/usr/local/bin/cloud-sql-proxy $INSTANCE_CONNECTION_NAME --port $DB_PORT &
 PROXY_PID=$!
 
 # Asegurar que se detiene cuando el contenedor termine
