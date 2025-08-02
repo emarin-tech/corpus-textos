@@ -23,8 +23,7 @@ steps:
     'build',
     '--no-cache',
     '--pull',
-    '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA',
-    '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:latest',
+    '-t', 'gcr.io/corpus-451314/corpus-app',
     '.'
   ]
 
@@ -34,7 +33,7 @@ steps:
   waitFor: ['build']
   args: [
     'push',
-    'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA'
+    'gcr.io/corpus-451314/corpus-app'
   ]
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
@@ -55,14 +54,13 @@ steps:
       stripe_public=$(cat /workspace/stripe_public)
 
       gcloud run deploy corpus2026 \
-        --image=europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA \
+        --image=gcr.io/corpus-451314/corpus-app \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
-        --add-cloudsql-instances=corpus-451314:europe-southwest1:corpus-2026 \
         --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true,PYTHONPATH=/app"
 
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
 
-serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
+# serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
