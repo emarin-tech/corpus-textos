@@ -60,7 +60,7 @@ steps:
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
-        --set-env-vars "DJANGO_SETTINGS_MODULE=$django_settings_module,DJANGO_SECRET_KEY=$django_secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true,PYTHONPATH=/app"
+        --set-env-vars "DJANGO_SETTINGS_MODULE=$django_settings_module,DJANGO_SECRET_KEY=$django_secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true,PYTHONPATH=/app,GOOGLE_CLOUD_PROJECT=corpus-451314"
 
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
