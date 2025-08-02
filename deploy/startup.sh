@@ -59,7 +59,9 @@ connections['default'].ensure_connection()
 # Ejecutar migraciones con mas detalle
 log "Running migrations with verbose output..."
 python manage.py showmigrations
+python manage.py migrate usuarios
 python manage.py migrate --verbosity 3
+
 
 # Recolectar archivos estaticos
 log "Collecting static files..."
