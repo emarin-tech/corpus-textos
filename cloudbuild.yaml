@@ -21,6 +21,7 @@ steps:
   waitFor: ['verify-secrets']
   args: [
     'build',
+    '--no-cache',
     '-t', 'gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA',
     '.'
   ]
@@ -57,7 +58,7 @@ steps:
         --platform=managed \
         --allow-unauthenticated \
         --add-cloudsql-instances=corpus-451314:europe-southwest1:corpus-2026 \
-        --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true"
+        --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true,PYTHONPATH=/app"
 
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)

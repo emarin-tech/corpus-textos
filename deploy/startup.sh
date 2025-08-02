@@ -1,5 +1,7 @@
 #!/bin/bash
 set -ex
+# Asegurar que Python encuentra los módulos
+export PYTHONPATH=/app
 
 # Cargar variables del .env si existe
 if [ -f .env ]; then
