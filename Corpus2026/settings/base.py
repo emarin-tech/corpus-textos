@@ -30,6 +30,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 # Application definition
 INSTALLED_APPS = [
+    'usuarios.apps.UsuariosConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -37,7 +38,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corpus.apps.CorpusConfig',
-    'usuarios.apps.UsuariosConfig',
     'membresias.apps.MembresiasConfig',
     'publicaciones.apps.PublicacionesConfig',
     'citas.apps.CitasConfig',
@@ -132,10 +132,8 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 
 # Configuración de archivos estáticos
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [
-    BASE_DIR / "static",  # Esto apunta a proyecto/static/
-]
+STATICFILES_DIRS = [BASE_DIR / "static"]  # tus archivos de diseño
+STATIC_ROOT = BASE_DIR / "staticfiles"  # destino final para producción
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
