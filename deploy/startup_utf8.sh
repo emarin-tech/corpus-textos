@@ -1,15 +1,10 @@
 #!/bin/bash
 set -ex
 
-# Cargar variables del .env si existe
-if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
-fi
-
 echo "Starting startup script..."
 echo "Startup.sh comenzando..." >&2
 
-# Configuracion
+# ConfiguraciÃ³n
 INSTANCE_CONNECTION_NAME="corpus-451314:europe-southwest1:corpus-2026"
 DB_PORT=5432
 
@@ -19,19 +14,14 @@ log() {
 }
 
 # Iniciar Cloud SQL Proxy solo si se necesita
-if [ "$USE_CLOUD_SQL_PROXY" = "true" ]; then
-    log "Starting Cloud SQL Proxy..."
-    /usr/local/bin/cloud-sql-proxy "$INSTANCE_CONNECTION_NAME" --port "$DB_PORT" &
-    PROXY_PID=$!
-    trap 'log "Stopping Cloud SQL Proxy..."; kill $PROXY_PID' SIGTERM
-    sleep 5
-fi
-
+log "Starting Cloud SQL Proxy..."
+/usr/local/bin/cloud-sql-proxy $INSTANCE_CONNECTION_NAME --port $DB_PORT &
+PROXY_PID=$!
 
 # Asegurar que se detiene cuando el contenedor termine
 trap "log 'Stopping Cloud SQL Proxy...'; kill $PROXY_PID" SIGTERM
 
-# Esperar a que Cloud SQL Proxy este listo
+# Esperar a que Cloud SQL Proxy estÃ© listo
 sleep 5
 
 # Mostrar entorno
@@ -41,11 +31,11 @@ log "PORT = ${PORT:-8000}"
 log "Working directory: $(pwd)"
 log "Contents: $(ls -la)"
 
-# Crear carpeta de estaticos
+# Crear carpeta de estÃ¡ticos
 log "Creating staticfiles directory..."
 mkdir -p staticfiles
 
-# Verificar conexion a la base de datos
+# Verificar conexiÃ³n a la base de datos
 log "Checking database connection..."
 python -c "
 import django
@@ -54,12 +44,12 @@ from django.db import connections
 connections['default'].ensure_connection()
 "
 
-# Ejecutar migraciones con mas detalle
+# Ejecutar migraciones con mÃ¡s detalle
 log "Running migrations with verbose output..."
 python manage.py showmigrations
 python manage.py migrate --verbosity 3
 
-# Recolectar archivos estaticos
+# Recolectar archivos estÃ¡ticos
 log "Collecting static files..."
 python manage.py collectstatic --noinput
 
