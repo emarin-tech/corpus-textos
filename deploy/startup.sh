@@ -12,7 +12,7 @@ echo "Starting startup script..."
 echo "Startup.sh comenzando..." >&2
 
 # Configuracion
-INSTANCE_CONNECTION_NAME="corpus-451314:europe-southwest1:corpus-2026"
+INSTANCE_CONNECTION_NAME="corpus-451314:europe-west1:corpus-2026-belgium"
 DB_PORT=5432
 
 # Logging con timestamp
