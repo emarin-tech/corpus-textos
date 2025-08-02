@@ -1,6 +1,7 @@
 from .base import *
 import os
 
+# a ver
 # Inicializa el cliente de Secret Manager
 ALLOWED_HOSTS = ['*']
 # Tu ID del proyecto en GCP
