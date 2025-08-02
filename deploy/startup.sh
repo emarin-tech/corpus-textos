@@ -11,6 +11,10 @@ fi
 echo "Starting startup script..."
 echo "Startup.sh comenzando..." >&2
 
+env | grep DB_
+export DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion
+
+
 # Configuracion
 INSTANCE_CONNECTION_NAME="corpus-451314:europe-west1:corpus-2026-belgium"
 DB_PORT=5432
@@ -59,7 +63,6 @@ connections['default'].ensure_connection()
 # Ejecutar migraciones con mas detalle
 log "Running migrations with verbose output..."
 python manage.py showmigrations
-python manage.py migrate usuarios
 python manage.py migrate --verbosity 3
 
 
@@ -71,3 +74,4 @@ python manage.py collectstatic --noinput
 log "Starting Gunicorn..."
 exec gunicorn Corpus2026.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --timeout 0 --access-logfile - --error-logfile - --capture-output --enable-stdio-inheritance --log-level debug
 
+sleep infinity
