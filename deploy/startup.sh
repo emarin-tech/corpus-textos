@@ -29,7 +29,7 @@ fi
 
 
 # Asegurar que se detiene cuando el contenedor termine
-trap "log 'Stopping Cloud SQL Proxy...'; kill $PROXY_PID" SIGTERM
+trap 'log "Stopping Cloud SQL Proxy..."; if [ -n "$PROXY_PID" ]; then kill $PROXY_PID; fi' SIGTERM
 
 # Esperar a que Cloud SQL Proxy este listo
 sleep 5
