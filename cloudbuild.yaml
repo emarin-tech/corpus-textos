@@ -54,7 +54,7 @@ steps:
       stripe_public=$(cat /workspace/stripe_public)
 
       gcloud run deploy corpus2026 \
-        --image=gcr.io/corpus-451314/corpus-app \
+        --image=gcr.io/corpus-451314/corpus-app:latest \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
