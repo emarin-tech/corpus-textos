@@ -54,7 +54,7 @@ steps:
       stripe_public=$(cat /workspace/stripe_public)
 
       gcloud run deploy corpus2026 \
-        --image=europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA,
+        --image=europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
