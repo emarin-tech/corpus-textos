@@ -24,7 +24,7 @@ steps:
     'build',
     '--no-cache',
     '--pull',
-    '-t', 'gcr.io/corpus-451314/corpus-app',
+    '-t', 'gcr.io/corpus-451314/corpus-app:latest',
     '.'
   ]
 
@@ -34,7 +34,7 @@ steps:
   waitFor: ['build']
   args: [
     'push',
-    'gcr.io/corpus-451314/corpus-app'
+    'gcr.io/corpus-451314/corpus-app:latest'
   ]
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
@@ -46,7 +46,7 @@ steps:
     - '-c'
     - |
       echo "Desplegando a Cloud Run..."
-      secret_key=$(cat /workspace/secret_key)
+      django_secret_key=$(cat /workspace/django_secret_key)
       db_name=$(cat /workspace/db_name)
       db_user=$(cat /workspace/db_user)
       db_password=$(cat /workspace/db_password)
@@ -65,4 +65,4 @@ steps:
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
 
-# serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
+serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
