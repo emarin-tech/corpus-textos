@@ -22,7 +22,9 @@ steps:
   args: [
     'build',
     '--no-cache',
-    '-t', 'gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA',
+    '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA',
+    '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:latest',
+    '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$(date +%Y%m%d-%H%M%S)',
     '.'
   ]
 
@@ -32,7 +34,7 @@ steps:
   waitFor: ['build']
   args: [
     'push',
-    'gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA'
+    'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA'
   ]
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
@@ -53,7 +55,7 @@ steps:
       stripe_public=$(cat /workspace/stripe_public)
 
       gcloud run deploy corpus2026 \
-        --image gcr.io/$PROJECT_ID/github.com/emarin-tech/corpus-textos:$COMMIT_SHA \
+        --image, europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA,
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
