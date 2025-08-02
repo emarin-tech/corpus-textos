@@ -6,7 +6,7 @@ import os
 ALLOWED_HOSTS = ['*']
 # Tu ID del proyecto en GCP
 GCP_PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT', 'corpus-451314')  # valor por defecto opcional
-
+DEBUG = False
 import os
 
 def get_secret(name):
