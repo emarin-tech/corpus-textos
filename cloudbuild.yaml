@@ -22,6 +22,7 @@ steps:
   args: [
     'build',
     '--no-cache',
+    'pull',
     '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:$COMMIT_SHA',
     '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/corpus2026-repo/corpus2026:latest',
     '.'
