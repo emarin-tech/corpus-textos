@@ -7,6 +7,7 @@ ALLOWED_HOSTS = ['*']
 # Tu ID del proyecto en GCP
 GCP_PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT', 'corpus-451314')  # valor por defecto opcional
 DEBUG = False
+DEBUG = False
 import os
 
 def get_secret(name):
@@ -48,10 +49,6 @@ DATABASES = {
 STRIPE_SECRET_KEY = get_secret('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = get_secret('STRIPE_PUBLISHABLE_KEY')
 DJANGO_SECRET_KEY = get_secret('DJANGO_SECRET_KEY')
-
-# Archivos estáticos y media
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
