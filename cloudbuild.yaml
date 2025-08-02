@@ -66,4 +66,5 @@ steps:
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
 
+
 serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
