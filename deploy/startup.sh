@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
-export DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion
+log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
+
 
 echo "Starting startup script..."
 
