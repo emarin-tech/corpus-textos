@@ -14,7 +14,7 @@ class PlanMembresia(models.Model):
 
     creado = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -22,7 +22,7 @@ class PlanMembresia(models.Model):
     )
     modificado = models.DateTimeField(auto_now=True)
     modificado_por = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -49,7 +49,7 @@ class Oferta(models.Model):
 
     creado = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -57,7 +57,7 @@ class Oferta(models.Model):
     )
     modificado = models.DateTimeField(auto_now=True)
     modificado_por = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -83,7 +83,7 @@ class MembresiaUsuario(models.Model):
 
     creado = models.DateTimeField(auto_now_add=True)
     creado_por = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
@@ -91,7 +91,7 @@ class MembresiaUsuario(models.Model):
     )
     modificado = models.DateTimeField(auto_now=True)
     modificado_por = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
