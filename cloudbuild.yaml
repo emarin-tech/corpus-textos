@@ -38,7 +38,7 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP)
-      docker build --no-cache --pull -t gcr.io/corpus-451314/corpus-app:latest -t gcr.io/corpus-451314/corpus-app:$TS .
+      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-app:latest -t europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS .
 
 
 # Paso 3: Subir la imagen a Container Registry (GCR)
@@ -50,8 +50,8 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP)
-      docker push gcr.io/corpus-451314/corpus-app:latest
-      docker push gcr.io/corpus-451314/corpus-app:$TS
+      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-app:latest
+      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -73,11 +73,11 @@ steps:
       django_settings_module=$(cat /workspace/django_settings_module)
 
       gcloud run deploy corpus2026 \
-        --image=gcr.io/corpus-451314/corpus-app:$TS \
+        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
-        --add-cloudsql-instances=corpus-451314:europe-west1:corpus-2026-belgium \
+        --add-cloudsql-instances=corpus-451314:europe-west1:corpus-2026-instance \
         --set-env-vars "DJANGO_SETTINGS_MODULE=$django_settings_module,DJANGO_SECRET_KEY=$django_secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true,PYTHONPATH=/app,GOOGLE_CLOUD_PROJECT=corpus-451314"
 
 options:
