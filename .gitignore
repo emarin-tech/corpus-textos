@@ -67,3 +67,5 @@ Thumbs.db
 *.bak
 
 .env
+/test_pg.py
+/corpus.zip

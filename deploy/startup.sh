@@ -3,6 +3,8 @@ set -ex
 # Asegurar que Python encuentra los módulos
 export PYTHONPATH=/app
 
+echo ">>> Iniciando startup.sh con PORT=$PORT"
+
 # Cargar variables del .env si existe
 if [ -f .env ]; then
     export $(grep -v '^#' .env | xargs)
@@ -72,6 +74,6 @@ python manage.py collectstatic --noinput
 
 # Iniciar Gunicorn
 log "Starting Gunicorn..."
-exec gunicorn Corpus2026.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers 2 --threads 4 --timeout 0 --access-logfile - --error-logfile - --capture-output --enable-stdio-inheritance --log-level debug
+exec gunicorn Corpus2026.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 0 --access-logfile - --error-logfile - --capture-output --enable-stdio-inheritance --log-level debug
 
 

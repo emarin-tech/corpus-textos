@@ -7,7 +7,6 @@ ALLOWED_HOSTS = ['*']
 # Tu ID del proyecto en GCP
 GCP_PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT', 'corpus-451314')  # valor por defecto opcional
 DEBUG = False
-DEBUG = False
 import os
 
 def get_secret(name):
@@ -48,6 +47,7 @@ DATABASES = {
 # Stripe
 STRIPE_SECRET_KEY = get_secret('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = get_secret('STRIPE_PUBLISHABLE_KEY')
+SECRET_KEY = get_secret('DJANGO_SECRET_KEY')
 DJANGO_SECRET_KEY = get_secret('DJANGO_SECRET_KEY')
 
 MEDIA_URL = '/media/'
