@@ -1,5 +1,6 @@
 from .base import *
 import os
+from decouple import config
 
 DATABASES = {
     'default': {
@@ -15,3 +16,4 @@ DATABASES = {
 STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY')
 STRIPE_PUBLISHABLE_KEY = config('STRIPE_PUBLISHABLE_KEY')
 DJANGO_SECRET_KEY = config('DJANGO_SECRET_KEY')
+SECRET_KEY = config('DJANGO_SECRET_KEY')
