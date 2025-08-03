@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Usuario, Grupo, UsuarioGrupo
+from .models import Grupo, UsuarioGrupo
 from django.db import connection
 from django.db import OperationalError, ProgrammingError
 
 
 try:
+    from .models import Usuario
     class UsuarioAdmin(UserAdmin):
         model = Usuario
         list_display = ('correo_electronico', 'nombre', 'apellidos', 'is_staff', 'is_active')
