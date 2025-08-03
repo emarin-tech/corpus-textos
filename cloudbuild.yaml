@@ -43,7 +43,7 @@ steps:
       TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
       echo "Usando tag: $TS"
 
-      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:$TS .
+      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:latest .
 
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'verify-secrets'
@@ -76,7 +76,7 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
-      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:$TS
+      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:latest
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -98,7 +98,7 @@ steps:
       django_settings_module=$(cat /workspace/django_settings_module)
 
       gcloud run deploy corpus2026 \
-        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:$TS \
+        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:latest \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
