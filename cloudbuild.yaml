@@ -37,7 +37,12 @@ steps:
   args:
     - -c
     - |
-      TS=$(cat /workspace/TIMESTAMP)
+      echo "Contenido de /workspace/TIMESTAMP:"
+      cat /workspace/TIMESTAMP
+
+      TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
+      echo "Usando tag: $TS"
+
       docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS .
 
 
@@ -49,7 +54,7 @@ steps:
   args:
     - -c
     - |
-      TS=$(cat /workspace/TIMESTAMP)
+      TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
       docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
@@ -61,7 +66,7 @@ steps:
     - -c
     - |
       echo "Desplegando a Cloud Run..."
-      TS=$(cat /workspace/TIMESTAMP)
+      TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
       django_secret_key=$(cat /workspace/django_secret_key)
       db_name=$(cat /workspace/db_name)
       db_user=$(cat /workspace/db_user)
