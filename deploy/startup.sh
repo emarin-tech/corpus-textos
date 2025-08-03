@@ -1,62 +1,39 @@
 #!/bin/bash
-set -ex
-# Asegurar que Python encuentra los módulos
-export PYTHONPATH=/app
-
-echo ">>> Iniciando startup.sh con PORT=$PORT"
-
-# Cargar variables del .env si existe
-if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
-fi
+set -e
 
 echo "Starting startup script..."
-echo "Startup.sh comenzando..." >&2
 
-env | grep DB_
-export DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion
+# Iniciar Cloud SQL Proxy en segundo plano
+/usr/local/cloud_sql_proxy corpus-451314:europe-west1:corpus-2026-instance --port 3306 &
+PROXY_PID=$!
 
-
-# Configuracion
-INSTANCE_CONNECTION_NAME="corpus-451314:europe-west1:corpus-2026-instance"
-DB_PORT=5432
-
-# Logging con timestamp
-log() {
-	echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
-}
-
-# Iniciar Cloud SQL Proxy solo si se necesita
-if [ "$USE_CLOUD_SQL_PROXY" = "true" ]; then
-    log "Starting Cloud SQL Proxy..."
-    /usr/local/bin/cloud-sql-proxy "$INSTANCE_CONNECTION_NAME" --port "$DB_PORT" &
-    PROXY_PID=$!
-    trap 'log "Stopping Cloud SQL Proxy..."; kill $PROXY_PID' SIGTERM
-    sleep 5
-fi
-
-
-# Asegurar que se detiene cuando el contenedor termine
-trap 'log "Stopping Cloud SQL Proxy..."; if [ -n "$PROXY_PID" ]; then kill $PROXY_PID; fi' SIGTERM
-
-# Esperar a que Cloud SQL Proxy este listo
+# Esperar a que Cloud SQL Proxy esté listo
 sleep 5
 
-# Mostrar entorno
-log "Environment:"
-log "DJANGO_SETTINGS_MODULE = ${DJANGO_SETTINGS_MODULE:-<not set>}"
-log "PORT = ${PORT:-8000}"
-log "Working directory: $(pwd)"
-log "Contents: $(ls -la)"
+# Función para logging
+log_message() {
+    echo "[$(date)] $1"
+}
 
-# Crear carpeta de estaticos
-log "Creating staticfiles directory..."
+# Capturar errores
+trap 'catch $? $LINENO' ERR
+catch() {
+    log_message "Error $1 occurred on line $2"
+}
+
+# Verificar el entorno
+log_message "Checking environment..."
+log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
+log_message "PORT = $PORT"
+log_message "Current directory: $(pwd)"
+log_message "Directory contents: $(ls -la)"
+
+# Crear directorio para archivos estáticos
+log_message "Creating static directory..."
 mkdir -p staticfiles
 
-# Verificar conexion a la base de datos
-log "Checking database connection..."
-log "Verificando variables DB_*:"
-env | grep DB_
+# Verificar la conexión a la base de datos
+log_message "Checking database connection..."
 python -c "
 import django
 django.setup()
@@ -64,18 +41,18 @@ from django.db import connections
 connections['default'].ensure_connection()
 "
 
-# Ejecutar migraciones con mas detalle
-log "Running migrations with verbose output..."
+# Ejecutar migraciones con más detalle
+log_message "Running migrations with verbose output..."
 python manage.py showmigrations
 python manage.py migrate --verbosity 3
 
-
-# Recolectar archivos estaticos
-log "Collecting static files..."
+# Recolectar archivos estáticos
+log_message "Collecting static files..."
 python manage.py collectstatic --noinput
 
 # Iniciar Gunicorn
-log "Starting Gunicorn..."
+log_message "Starting Gunicorn..."
 exec gunicorn Corpus2026.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 0 --access-logfile - --error-logfile - --capture-output --enable-stdio-inheritance --log-level debug
 
-
+# Asegurarse de que Cloud SQL Proxy se detenga cuando el contenedor se detenga
+trap "kill $PROXY_PID" SIGTERM

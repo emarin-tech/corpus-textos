@@ -1,15 +1,4 @@
 steps:
-# Paso 0: Generar timestamp y guardarlo
-- name: 'ubuntu'
-  id: 'generate-timestamp'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Generando timestamp..."
-      date +%Y%m%d%H%M%S > /workspace/TIMESTAMP
-
-# Paso 1: Obtener secretos desde Secret Manager
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'verify-secrets'
   entrypoint: 'bash'
@@ -18,6 +7,7 @@ steps:
     - |
       echo "Obteniendo secretos..."
       echo "$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/django_secret_key
+      echo "$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/secret_key
       echo "$(gcloud secrets versions access latest --secret=DB_NAME)" > /workspace/db_name
       echo "$(gcloud secrets versions access latest --secret=DB_USER)" > /workspace/db_user
       echo "$(gcloud secrets versions access latest --secret=DB_PASSWORD)" > /workspace/db_password
@@ -30,50 +20,13 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: 'build'
   waitFor: ['verify-secrets']
-  entrypoint: 'bash'
-  args:
-    - -c
-    - |
-      echo "Contenido de /workspace/TIMESTAMP:"
-      cat /workspace/TIMESTAMP
+  args: ['build', '-t', 'gcr.io/corpus2026/corpus-app', '.']
 
-      TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
-      echo "Usando tag: $TS"
-
-      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:latest .
-
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'verify-secrets'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Obteniendo secretos..."
-      echo "SECRET_KEY=$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/env.list
-      echo "DJANGO_SECRET_KEY=$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/env.list
-      echo "DB_NAME=$(gcloud secrets versions access latest --secret=DB_NAME)" >> /workspace/env.list
-      echo "DB_USER=$(gcloud secrets versions access latest --secret=DB_USER)" >> /workspace/env.list
-      echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret=DB_PASSWORD)" >> /workspace/env.list
-      echo "DB_HOST=$(gcloud secrets versions access latest --secret=DB_HOST)" >> /workspace/env.list
-      echo "STRIPE_SECRET_KEY=$(gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY)" >> /workspace/env.list
-      echo "STRIPE_PUBLISHABLE_KEY=$(gcloud secrets versions access latest --secret=STRIPE_PUBLISHABLE_KEY)" >> /workspace/env.list
-      echo "DJANGO_SETTINGS_MODULE=$(gcloud secrets versions access latest --secret=DJANGO_SETTINGS_MODULE)" >> /workspace/env.list
-      echo "DEBUG=False" >> /workspace/env.list
-      echo "USE_SECRET_MANAGER=true" >> /workspace/env.list
-      echo "USE_CLOUD_SQL_PROXY=true" >> /workspace/env.list
-      echo "PYTHONPATH=/app" >> /workspace/env.list
-      echo "GOOGLE_CLOUD_PROJECT=corpus-451314" >> /workspace/env.list
-
-# Paso 3: Subir la imagen a Container Registry (GCR)
+# Paso 3: Publicar la imagen
 - name: 'gcr.io/cloud-builders/docker'
   id: 'push'
-  waitFor: ['build']
-  entrypoint: 'bash'
-  args:
-    - -c
-    - |
-      TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
-      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:latest
+  waitFor: [ 'verify-secrets' ]
+  args: ['push', 'gcr.io/corpus2026/corpus-app']
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -81,29 +34,17 @@ steps:
   waitFor: ['push']
   entrypoint: 'bash'
   args:
-    - -c
-    - |
-      echo "Desplegando a Cloud Run..."
-      TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
-      django_secret_key=$(cat /workspace/django_secret_key)
-      db_name=$(cat /workspace/db_name)
-      db_user=$(cat /workspace/db_user)
-      db_password=$(cat /workspace/db_password)
-      db_host=$(cat /workspace/db_host)
-      stripe_secret=$(cat /workspace/stripe_secret)
-      stripe_public=$(cat /workspace/stripe_public)
-      django_settings_module=$(cat /workspace/django_settings_module)
-
-      gcloud run deploy corpus2026 \
-        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:latest \
-        --region=europe-west1 \
-        --platform=managed \
-        --allow-unauthenticated \
-        --add-cloudsql-instances=corpus-451314:europe-west1:corpus-2026-instance \
-        --env-vars-file=/workspace/env.list
-
-options:
-  logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
-
-
-serviceAccount: '132887978036-compute@developer.gserviceaccount.com' # Cambia por tu cuenta de servicio
+  - '-c'
+  - |
+    secret_key=$(cat /workspace/secret_key)
+    db_name=$(cat /workspace/db_name)
+    db_user=$(cat /workspace/db_user)
+    db_password=$(cat /workspace/db_password)
+    db_host=$(cat /workspace/db_host)
+    
+    gcloud run deploy Corpus2026 \
+      --image gcr.io/corpus2026/corpus-app \
+      --region europe-west1 \
+      --platform managed \
+      --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.production,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host" \
+      --allow-unauthenticated
