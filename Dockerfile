@@ -42,3 +42,4 @@ EXPOSE 8080
 
 # Comando para iniciar la aplicación
 CMD ["/app/deploy/startup.sh"]
+
