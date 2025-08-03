@@ -1,5 +1,9 @@
 #!/bin/bash
 set -e
+
+log_message() {
+    echo "[$(date -u)] $1"
+}
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
 
 
