@@ -4,7 +4,7 @@ set -e
 log_message() {
     echo "[$(date -u)] $1"
 }
-export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+export DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion
 
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
 
