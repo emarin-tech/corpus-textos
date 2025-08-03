@@ -18,7 +18,7 @@ export DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion
 
 
 # Configuracion
-INSTANCE_CONNECTION_NAME="corpus-451314:europe-west1:corpus-2026-belgium"
+INSTANCE_CONNECTION_NAME="corpus-451314:europe-west1:corpus-2026-instance"
 DB_PORT=5432
 
 # Logging con timestamp
