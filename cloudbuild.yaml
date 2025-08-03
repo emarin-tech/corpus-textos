@@ -43,8 +43,29 @@ steps:
       TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
       echo "Usando tag: $TS"
 
-      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS .
+      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:$TS .
 
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: 'verify-secrets'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      echo "Obteniendo secretos..."
+      echo "SECRET_KEY=$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/env.list
+      echo "DJANGO_SECRET_KEY=$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/env.list
+      echo "DB_NAME=$(gcloud secrets versions access latest --secret=DB_NAME)" >> /workspace/env.list
+      echo "DB_USER=$(gcloud secrets versions access latest --secret=DB_USER)" >> /workspace/env.list
+      echo "DB_PASSWORD=$(gcloud secrets versions access latest --secret=DB_PASSWORD)" >> /workspace/env.list
+      echo "DB_HOST=$(gcloud secrets versions access latest --secret=DB_HOST)" >> /workspace/env.list
+      echo "STRIPE_SECRET_KEY=$(gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY)" >> /workspace/env.list
+      echo "STRIPE_PUBLISHABLE_KEY=$(gcloud secrets versions access latest --secret=STRIPE_PUBLISHABLE_KEY)" >> /workspace/env.list
+      echo "DJANGO_SETTINGS_MODULE=$(gcloud secrets versions access latest --secret=DJANGO_SETTINGS_MODULE)" >> /workspace/env.list
+      echo "DEBUG=False" >> /workspace/env.list
+      echo "USE_SECRET_MANAGER=true" >> /workspace/env.list
+      echo "USE_CLOUD_SQL_PROXY=true" >> /workspace/env.list
+      echo "PYTHONPATH=/app" >> /workspace/env.list
+      echo "GOOGLE_CLOUD_PROJECT=corpus-451314" >> /workspace/env.list
 
 # Paso 3: Subir la imagen a Container Registry (GCR)
 - name: 'gcr.io/cloud-builders/docker'
@@ -55,7 +76,7 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP | tr -d '\n')
-      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS
+      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:$TS
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -77,24 +98,12 @@ steps:
       django_settings_module=$(cat /workspace/django_settings_module)
 
       gcloud run deploy corpus2026 \
-        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS \
+        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus2026/corpus-app:$TS \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
         --add-cloudsql-instances=corpus-451314:europe-west1:corpus-2026-instance \
-        --set-env-vars=DJANGO_SETTINGS_MODULE=$(cat /workspace/django_settings_module) \
-        --set-env-vars=SECRET_KEY=$django_secret_key \
-        --set-env-vars=DB_NAME=$(cat /workspace/db_name) \
-        --set-env-vars=DB_USER=$(cat /workspace/db_user) \
-        --set-env-vars=DB_PASSWORD=$(cat /workspace/db_password) \
-        --set-env-vars=DB_HOST=$(cat /workspace/db_host) \
-        --set-env-vars=STRIPE_SECRET_KEY=$(cat /workspace/stripe_secret) \
-        --set-env-vars=STRIPE_PUBLISHABLE_KEY=$(cat /workspace/stripe_public) \
-        --set-env-vars=DEBUG=False \
-        --set-env-vars=USE_SECRET_MANAGER=true \
-        --set-env-vars=USE_CLOUD_SQL_PROXY=true \
-        --set-env-vars=PYTHONPATH=/app \
-        --set-env-vars=GOOGLE_CLOUD_PROJECT=corpus-451314
+        --env-vars-file=/workspace/env.list
 
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
