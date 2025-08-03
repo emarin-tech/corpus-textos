@@ -1,10 +1,11 @@
 #!/bin/bash
 set -e
+export DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion
 
 echo "Starting startup script..."
 
 # Iniciar Cloud SQL Proxy en segundo plano
-/usr/local/cloud_sql_proxy corpus-451314:europe-west1:corpus-2026-instance --port 5432 &
+/usr/local/bin/cloud_sql_proxy corpus-451314:europe-west1:corpus-2026-instance --port 5432 &
 PROXY_PID=$!
 
 # Esperar a que Cloud SQL Proxy esté listo
