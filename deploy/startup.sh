@@ -29,14 +29,14 @@ catch() {
 
 # Verificar el entorno
 log_message "Checking environment..."
-export DB_NAME=$(cat /workspace/db_name)
-export DB_USER=$(cat /workspace/db_user)
-export DB_PASSWORD=$(cat /workspace/db_password)
-export DB_HOST=$(cat /workspace/db_host)
-export STRIPE_SECRET_KEY=$(cat /workspace/stripe_secret)
-export STRIPE_PUBLISHABLE_KEY=$(cat /workspace/stripe_public)
-export DJANGO_SECRET_KEY=$(cat /workspace/django_secret_key)
-export DJANGO_SETTINGS_MODULE=$(cat /workspace/django_settings_module)
+export DB_NAME=${DB_NAME}
+export DB_USER=${DB_USER}
+export DB_PASSWORD=${DB_PASSWORD}
+export DB_HOST=${DB_HOST}
+export STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+export STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
+export DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
 log_message "PORT = $PORT"
 log_message "Current directory: $(pwd)"
