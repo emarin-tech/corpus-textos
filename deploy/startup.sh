@@ -25,12 +25,13 @@ log_message "Checking environment..."
 export DB_NAME=${DB_NAME}
 export DB_USER=${DB_USER}
 export DB_PASSWORD=${DB_PASSWORD}
+export DB_PORT=${DB_PORT}
 export DB_HOST=${DB_HOST}
 export STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
 export STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
 export DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
-log_message "PORT = $PORT"
+log_message "PORT = $BD_PORT"
 log_message "Current directory: $(pwd)"
 log_message "Directory contents: $(ls -la)"
 
