@@ -4,6 +4,8 @@ set -e
 log_message() {
     echo "[$(date -u)] $1"
 }
+export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
+
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
 
 
@@ -15,11 +17,6 @@ PROXY_PID=$!
 
 # Esperar a que Cloud SQL Proxy esté listo
 sleep 5
-
-# Función para logging
-log_message() {
-    echo "[$(date)] $1"
-}
 
 # Capturar errores
 trap 'catch $? $LINENO' ERR
@@ -36,7 +33,6 @@ export DB_HOST=${DB_HOST}
 export STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
 export STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
 export DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
-export DJANGO_SETTINGS_MODULE=${DJANGO_SETTINGS_MODULE}
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
 log_message "PORT = $PORT"
 log_message "Current directory: $(pwd)"
