@@ -1,4 +1,17 @@
+substitutions:
+  _TS: "notimestamp"
+
 steps:
+# Paso 0: Generar timestamp y guardarlo
+- name: 'ubuntu'
+  id: 'generate-timestamp'
+  entrypoint: 'bash'
+  args:
+    - '-c'
+    - |
+      echo "Generando timestamp..."
+      date +%Y%m%d%H%M%S > /workspace/TIMESTAMP
+
 # Paso 1: Obtener secretos desde Secret Manager
 - name: 'gcr.io/cloud-builders/gcloud'
   id: 'verify-secrets'
@@ -20,22 +33,25 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: 'build'
   waitFor: ['verify-secrets']
-  args: [
-    'build',
-    '--no-cache',
-    '--pull',
-    '-t', 'gcr.io/corpus-451314/corpus-app:latest',
-    '.'
-  ]
+  entrypoint: 'bash'
+  args:
+    - -c
+    - |
+      TS=$(cat /workspace/TIMESTAMP)
+      docker build --no-cache --pull -t gcr.io/corpus-451314/corpus-app:latest -t gcr.io/corpus-451314/corpus-app:$TS .
+
 
 # Paso 3: Subir la imagen a Container Registry (GCR)
 - name: 'gcr.io/cloud-builders/docker'
   id: 'push'
   waitFor: ['build']
-  args: [
-    'push',
-    'gcr.io/corpus-451314/corpus-app:latest'
-  ]
+  entrypoint: 'bash'
+  args:
+    - -c
+    - |
+      TS=$(cat /workspace/TIMESTAMP)
+      docker push gcr.io/corpus-451314/corpus-app:latest
+      docker push gcr.io/corpus-451314/corpus-app:$TS
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -43,9 +59,10 @@ steps:
   waitFor: ['push']
   entrypoint: 'bash'
   args:
-    - '-c'
+    - -c
     - |
       echo "Desplegando a Cloud Run..."
+      TS=$(cat /workspace/TIMESTAMP)
       django_secret_key=$(cat /workspace/django_secret_key)
       db_name=$(cat /workspace/db_name)
       db_user=$(cat /workspace/db_user)
@@ -56,7 +73,7 @@ steps:
       django_settings_module=$(cat /workspace/django_settings_module)
 
       gcloud run deploy corpus2026 \
-        --image=gcr.io/corpus-451314/corpus-app:latest \
+        --image=gcr.io/corpus-451314/corpus-app:$TS \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
