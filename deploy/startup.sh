@@ -55,6 +55,8 @@ mkdir -p staticfiles
 
 # Verificar conexion a la base de datos
 log "Checking database connection..."
+log "Verificando variables DB_*:"
+env | grep DB_
 python -c "
 import django
 django.setup()
