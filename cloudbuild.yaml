@@ -82,7 +82,19 @@ steps:
         --platform=managed \
         --allow-unauthenticated \
         --add-cloudsql-instances=corpus-451314:europe-west1:corpus-2026-instance \
-        --set-env-vars "DJANGO_SETTINGS_MODULE=$django_settings_module,SECRET_KEY=$django_secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host,STRIPE_SECRET_KEY=$stripe_secret,STRIPE_PUBLISHABLE_KEY=$stripe_public,DEBUG=False,USE_SECRET_MANAGER=true,USE_CLOUD_SQL_PROXY=true,PYTHONPATH=/app,GOOGLE_CLOUD_PROJECT=corpus-451314"
+        --set-env-vars=DJANGO_SETTINGS_MODULE=$(cat /workspace/django_settings_module) \
+        --set-env-vars=SECRET_KEY=$django_secret_key \
+        --set-env-vars=DB_NAME=$(cat /workspace/db_name) \
+        --set-env-vars=DB_USER=$(cat /workspace/db_user) \
+        --set-env-vars=DB_PASSWORD=$(cat /workspace/db_password) \
+        --set-env-vars=DB_HOST=$(cat /workspace/db_host) \
+        --set-env-vars=STRIPE_SECRET_KEY=$(cat /workspace/stripe_secret) \
+        --set-env-vars=STRIPE_PUBLISHABLE_KEY=$(cat /workspace/stripe_public) \
+        --set-env-vars=DEBUG=False \
+        --set-env-vars=USE_SECRET_MANAGER=true \
+        --set-env-vars=USE_CLOUD_SQL_PROXY=true \
+        --set-env-vars=PYTHONPATH=/app \
+        --set-env-vars=GOOGLE_CLOUD_PROJECT=corpus-451314
 
 options:
   logging: CLOUD_LOGGING_ONLY   # O el modo que prefieras (NONE, GCS_ONLY, etc)
