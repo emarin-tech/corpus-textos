@@ -38,7 +38,7 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP)
-      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS .
+      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS .
 
 
 # Paso 3: Subir la imagen a Container Registry (GCR)
@@ -50,7 +50,7 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP)
-      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS
+      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -72,7 +72,7 @@ steps:
       django_settings_module=$(cat /workspace/django_settings_module)
 
       gcloud run deploy corpus2026 \
-        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS \
+        --image=europe-west1-docker.pkg.dev/corpus-451314/corpus-repo/corpus-app:$TS \
         --region=europe-west1 \
         --platform=managed \
         --allow-unauthenticated \
