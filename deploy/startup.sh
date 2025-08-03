@@ -11,10 +11,6 @@ log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
 
 echo "Starting startup script..."
 
-# Iniciar Cloud SQL Proxy en segundo plano
-/usr/local/bin/cloud_sql_proxy corpus-451314:europe-west1:corpus-2026-instance --port 5432 &
-PROXY_PID=$!
-
 # Esperar a que Cloud SQL Proxy esté listo
 sleep 5
 
@@ -63,6 +59,3 @@ python manage.py collectstatic --noinput
 # Iniciar Gunicorn
 log_message "Starting Gunicorn..."
 exec gunicorn Corpus2026.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 0 --access-logfile - --error-logfile - --capture-output --enable-stdio-inheritance --log-level debug
-
-# Asegurarse de que Cloud SQL Proxy se detenga cuando el contenedor se detenga
-trap "kill $PROXY_PID" SIGTERM
