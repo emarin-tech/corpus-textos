@@ -38,7 +38,7 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP)
-      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-app:latest -t europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS .
+      docker build --no-cache --pull -t europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS .
 
 
 # Paso 3: Subir la imagen a Container Registry (GCR)
@@ -50,7 +50,6 @@ steps:
     - -c
     - |
       TS=$(cat /workspace/TIMESTAMP)
-      docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-app:latest
       docker push europe-west1-docker.pkg.dev/corpus-451314/corpus-app:$TS
 
 # Paso 4: Desplegar a Cloud Run con variables de entorno
