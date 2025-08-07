@@ -49,7 +49,7 @@ class Grupo(models.Model):
     nombre = models.CharField(max_length=150)
     organizacion = models.CharField(max_length=255, blank=True, null=True)
     responsable = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.CASCADE,
         related_name='grupos_creados'
     )
@@ -72,7 +72,7 @@ class Grupo(models.Model):
 
 class UsuarioGrupo(models.Model):
     usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        'usuarios.Usuario',
         on_delete=models.CASCADE,
         related_name='membresias_grupo'
     )

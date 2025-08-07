@@ -7,15 +7,14 @@ ENV PYTHONUNBUFFERED=1 \
 
 # Instalar dependencias del sistema y Cloud SQL Proxy
 RUN apt-get update && apt-get install -y \
-    libpq-dev \
+    default-libmysqlclient-dev \
     build-essential \
     pkg-config \
     dos2unix \
     wget \
     && rm -rf /var/lib/apt/lists/* \
-    && wget https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.0/cloud-sql-proxy.linux.amd64 -O /usr/local/bin/cloud-sql-proxy \
-    && chmod +x /usr/local/bin/cloud-sql-proxy
-
+    && wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O /usr/local/bin/cloud_sql_proxy \
+    && chmod +x /usr/local/bin/cloud_sql_proxy
 
 # Establecer directorio de trabajo
 WORKDIR /app
@@ -43,3 +42,4 @@ EXPOSE 8080
 
 # Comando para iniciar la aplicación
 CMD ["/app/deploy/startup.sh"]
+
