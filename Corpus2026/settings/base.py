@@ -21,11 +21,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corpus.apps.CorpusConfig',
-    'membresias.apps.MembresiasConfig',
-    'publicaciones.apps.PublicacionesConfig',
-    'citas.apps.CitasConfig',
-    'social_django',
+    # 'corpus.apps.CorpusConfig',
+    # 'membresias.apps.MembresiasConfig',
+    # 'publicaciones.apps.PublicacionesConfig',
+    # 'citas.apps.CitasConfig',
+    # 'social_django',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +103,7 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-AUTH_USER_MODEL = 'usuarios.Usuario'
+# AUTH_USER_MODEL = 'usuarios.Usuario'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
