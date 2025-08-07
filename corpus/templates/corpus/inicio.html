@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio | Corpus{% endblock %}
+
+{% block content %}
+<section class="hero text-center py-5">
+  <div class="container">
+    <!-- Título principal -->
+    <h1 class="display-4 mb-3 fw-semibold" style="font-family: 'Ibarra Real Nova', serif; color: #024c57;">
+      Tu archivo personal de citas y referencias.
+    </h1>
+
+    <!-- Subtítulo -->
+    <p class="lead mb-5 fs-3" style="color: #333;">
+      Guarda, organiza y conecta fragmentos de publicaciones, potenciado por IA. Ideal para investigadores, autores y mentes curiosas.
+    </p>
+
+    <!-- Ventajas clave -->
+    <div class="row justify-content-center mb-5">
+      <div class="col-12 col-md-4 mb-4">
+        <div class="d-flex flex-column align-items-center">
+          <!-- Icono 1: IA -->
+          <i data-lucide="brain-circuit" class="icon-xl me-2 text-corpus"></i>
+          <p class="mt-2 fw-medium fs-5">IA que sugiere citas relacionadas</p>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4 mb-4">
+        <div class="d-flex flex-column align-items-center">
+          <!-- Icono 2: Etiquetas -->
+          <i data-lucide="tags" class="icon-xl me-2 text-corpus"></i>
+          <p class="mt-2 fw-medium fs-5">Organización por etiquetas y fuentes</p>
+        </div>
+      </div>
+
+      <div class="col-12 col-md-4 mb-4">
+        <div class="d-flex flex-column align-items-center">
+          <!-- Icono 3: Exportar -->
+          <i data-lucide="folder-output" class="icon-xl me-2 text-corpus"></i>
+          <p class="mt-2 fw-medium fs-5">Exporta en APA, MLA, Chicago</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botón CTA -->
+    <a href="/registro" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
+      Pruébalo gratis
+    </a>
+  </div>
+</section>
+
+<section style="background-color: rgba(2,76,87,0.2);">
+  <div class="container py-5">
+    <h1 class="text-center mb-5 corpus-title">¿Qué es Corpus?</h1>
+    <!-- Subtítulo -->
+    <p class="text-center lead mb-5 fs-3" style="color: #333;">
+      Corpus es tu <span style="color: #024c57; font-weight: 500;">archivo digital</span> de citas y referencias.<br>
+      Una herramienta pensada para investigadores, autores, docentes y mentes curiosas.<br>
+      Permite guardar fragmentos de publicaciones y conectarlos entre sí mediante etiquetas, fuentes y crear sugerencias impulsadas por inteligencia artificial.
+    </p>
+  </div>
+</section>
+
+<section class="timeline">
+  <div class="container py-5">
+    <h1 class="text-center mb-5 corpus-title">Funcionalidades</h1>
+    <!-- Feature 1 -->
+    <div class="row align-items-center mb-5 section-timeline">
+      <div class="col-md-6">
+        <img src="{% static 'img/feature-personalized.jpg' %}" class="img-fluid d-block mx-auto rounded shadow" alt="Citas personales" width="450">
+      </div>
+      <div class="col-md-6">
+        <h3 class="fw-bold">Citas personales</h3>
+        <p>Guarda fragmentos de texto, imágenes o frases inspiradoras directamente desde tus fuentes de lectura. Puedes capturar citas mientras lees y añadir notas personales para contextualizarlas.</p>
+      </div>
+    </div>
+
+    <!-- Feature 2 -->
+    <div class="row align-items-center mb-5 section-timeline even">
+      <div class="col-md-6 order-md-2">
+        <img src="{% static 'img/feature-organized.jpg' %}" class="img-fluid d-block mx-auto rounded shadow" alt="Publicaciones" width="450">
+      </div>
+      <div class="col-md-6 order-md-1">
+        <h3 class="fw-bold">Publicaciones organizadas</h3>
+        <p>Cada cita pertenece a una fuente: libro, artículo, web o PDF. Corpus te permite gestionar tu biblioteca con orden, filtros y acceso rápido a cada referencia.</p>
+      </div>
+    </div>
+
+    <!-- Feature 3 -->
+    <div class="row align-items-center mb-5 section-timeline">
+      <div class="col-md-6">
+        <img src="{% static 'img/feature-ia.jpg' %}" class="img-fluid d-block mx-auto rounded shadow" alt="IA Corpus" width="450">
+      </div>
+      <div class="col-md-6 order-md-1">
+        <h3 class="fw-bold">Potenciado por IA</h3>
+        <p>Corpus aprende de tu estilo e intereses para sugerirte nuevas citas, conexiones temáticas y etiquetas relevantes. Cuanto más lo usas, más inteligente se vuelve.</p>
+      </div>
+    </div>
+
+    <!-- Feature 4 -->
+    <div class="row align-items-center mb-5 section-timeline even">
+      <div class="col-md-6 order-md-2">
+        <img src="{% static 'img/feature-ocr.jpg' %}" class="img-fluid d-block mx-auto rounded shadow" alt="Etiquetas" width="450">
+      </div>
+      <div class="col-md-6">
+        <h3 class="fw-bold">Reconocimiento de texto (OCR)</h3>
+        <p>Extrae texto de imágenes escaneadas o fotos con precisión. Ideal para digitalizar fragmentos de libros físicos, apuntes o imágenes.</p>
+      </div>
+    </div>
+
+    <!-- Feature 5 -->
+    <div class="row align-items-center mb-5 section-timeline">
+      <div class="col-md-6">
+        <img src="{% static 'img/feature-teams.jpg' %}" class="img-fluid d-block mx-auto rounded shadow" alt="Estilos de cita" width="450">
+      </div>
+      <div class="col-md-6">
+        <h3 class="fw-bold">Trabajo en grupo</h3>
+        <p>Crea bibliotecas compartidas y colabora con otros miembros de tu organización. Puedes asignar roles, editar citas en equipo y construir una base de conocimiento colectiva para tus proyectos o investigaciones.</p>
+      </div>
+    </div>
+    <!-- Botón CTA -->
+    <div class="text-center">
+      <a href="/registro" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
+        Pruébalo gratis
+      </a>
+    </div>
+  </div>
+</section>
+<!-- Otras funcionalidades -->
+<section class="py-5" style="background-color: rgba(2,76,87,0.2);">
+  <div class="container">
+    <h2 class="text-center mb-5 corpus-title" style="color: #024c57;">Aprovecha a máximo tu archivo</h2>
+    <div class="row text-center">
+
+      <!-- Búsqueda avanzada -->
+      <div class="col-md-3 mb-4">
+        <img src="{% static 'img/feature-busqueda-2.jpg' %}" class="img-fluid rounded shadow mb-3" alt="Búsqueda avanzada" width="250">
+        <h5 class="fw-bold">Búsqueda avanzada</h5>
+        <p>Encuentra citas por texto, autor, fecha, fuente o etiqueta con filtros precisos y resultados instantáneos.</p>
+      </div>
+      <!-- Etiquetas personalizables -->
+      <div class="col-md-3 mb-4">
+        <img src="{% static 'img/feature-etiquetas-2.jpg' %}" class="img-fluid rounded shadow mb-3" alt="Etiquetas personalizables" width="250">
+        <h5 class="fw-bold">Etiquetas personalizables</h5>
+        <p>Clasifica tus citas con etiquetas temáticas para organizarlas según autor, tema, proyecto o disciplina.</p>
+      </div>
+      <!-- Exporta tus citas -->
+      <div class="col-md-3 mb-4">
+        <img src="{% static 'img/feature-exportar-2.jpg' %}" class="img-fluid rounded shadow mb-3" alt="Exporta tus citas" width="250">
+        <h5 class="fw-bold">Exporta tus citas</h5>
+        <p>Genera bibliografías automáticamente en formato APA, MLA o Chicago para usar en tus trabajos o publicaciones.</p>
+      </div>
+      <!-- Traducción automática -->
+      <div class="col-md-3 mb-4">
+        <img src="{% static 'img/feature-traducir-2.jpg' %}" class="img-fluid rounded shadow mb-3" alt="Exporta tus citas" width="250">
+        <h5 class="fw-bold">Traducción automática</h5>
+        <p>Traduce tus citas y notas al instante para trabajar con fuentes en distintos idiomas.</p>
+      </div>
+    </div>
+    <!-- Botón CTA -->
+    <div class="text-center">
+      <a href="/registro" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
+        Pruébalo gratis
+      </a>
+    </div>
+  </div>
+</section>
+<section class="py-5 bg-white text-center">
+  <div class="container">
+    <h2 class="text-center mb-5 corpus-title" style="color: #024c57;">¿Quieres recibir novedades?</h2>
+    <p class="mb-4">Suscríbete para conocer nuevas funcionalidades, consejos y mejoras de Corpus.</p>
+    <form class="row justify-content-center gx-2">
+      <div class="col-md-4 col-sm-6 mb-2">
+        <input type="email" class="form-control" placeholder="Tu correo electrónico" required>
+      </div>
+      <div class="col-auto mb-2">
+        <button type="submit" class="btn btn-primary" style="background-color: #024c57; border-color: #024c57;">Suscribirme</button>
+      </div>
+    </form>
+  </div>
+</section>
+{% endblock %}
