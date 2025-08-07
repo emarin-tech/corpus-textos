@@ -44,3 +44,51 @@ class Usuario(AbstractUser):
     class Meta:
         verbose_name = "usuario"
         verbose_name_plural = "usuarios"
+
+class Grupo(models.Model):
+    nombre = models.CharField(max_length=150)
+    organizacion = models.CharField(max_length=255, blank=True, null=True)
+    responsable = models.ForeignKey(
+        'usuarios.Usuario',
+        on_delete=models.CASCADE,
+        related_name='grupos_creados'
+    )
+
+    tipo_membresia = models.CharField(max_length=50, blank=True, null=True)
+    inicio_membresia = models.DateField(blank=True, null=True)
+    fin_membresia = models.DateField(blank=True, null=True)
+    membresia_cancelada_en = models.DateField(blank=True, null=True)
+    logo = models.ImageField(upload_to='autores/fotos/', null=True, blank=True)
+
+    creado = models.DateTimeField(auto_now_add=True)
+    modificado = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = "grupo"
+        verbose_name_plural = "grupos"
+
+class UsuarioGrupo(models.Model):
+    usuario = models.ForeignKey(
+        'usuarios.Usuario',
+        on_delete=models.CASCADE,
+        related_name='membresias_grupo'
+    )
+    grupo = models.ForeignKey(
+        Grupo,
+        on_delete=models.CASCADE,
+        related_name='miembros'
+    )
+    fecha_union = models.DateTimeField(auto_now_add=True)
+    activo = models.BooleanField(default=True)
+    rol = models.CharField(max_length=50, default='miembro')  # 'miembro', 'editor', etc.
+
+    class Meta:
+        unique_together = ('usuario', 'grupo')
+        verbose_name = "membresía de grupo"
+        verbose_name_plural = "membresías de grupo"
+
+    def __str__(self):
+        return f'{self.usuario} en {self.grupo}'
