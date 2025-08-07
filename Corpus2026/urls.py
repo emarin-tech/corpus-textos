@@ -18,14 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from corpus import views
+
 
 urlpatterns = [
-    path('', include('corpus.urls')),
-    path('admin/', admin.site.urls),
-    path('usuarios/', include('usuarios.urls')),  # 👈 Asegúrate de incluir esto
-    path('accounts/', include('django.contrib.auth.urls')),  # Puede quedar para logout u otras
-    path('auth/', include('social_django.urls', namespace='social')),
+    # path('', include('corpus.urls')),
+    # path('admin/', admin.site.urls),
+    # path('usuarios/', include('usuarios.urls')),  # 👈 Asegúrate de incluir esto
+    # path('accounts/', include('django.contrib.auth.urls')),  # Puede quedar para logout u otras
+    # path('auth/', include('social_django.urls', namespace='social')),
 
 ]
 
