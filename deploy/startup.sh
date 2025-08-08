@@ -30,8 +30,16 @@ export DB_HOST=${DB_HOST}
 export STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
 export STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
 export DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+export PORT="${PORT:-8080}"  # fallback sano
+
 log_message "DJANGO_SETTINGS_MODULE = $DJANGO_SETTINGS_MODULE"
-log_message "PORT = $BD_PORT"
+log_message "PORT = $PORT"
+# Dump filtrado para ver si Cloud Run ha inyectado los EMAIL_* (sin valores sensibles)
+[ -n "${EMAIL_HOST:-}" ] && log_message "EMAIL_HOST present" || log_message "EMAIL_HOST MISSING"
+[ -n "${EMAIL_HOST_USER:-}" ] && log_message "EMAIL_HOST_USER present" || log_message "EMAIL_HOST_USER MISSING"
+[ -n "${EMAIL_HOST_PASSWORD:-}" ] && log_message "EMAIL_HOST_PASSWORD present" || log_message "EMAIL_HOST_PASSWORD MISSING"
+[ -n "${EMAIL_PORT:-}" ] && log_message "EMAIL_PORT present" || log_message "EMAIL_PORT MISSING"
+
 log_message "Current directory: $(pwd)"
 log_message "Directory contents: $(ls -la)"
 
