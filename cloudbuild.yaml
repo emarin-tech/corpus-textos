@@ -15,6 +15,12 @@ steps:
       echo "$(gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY)" > /workspace/stripe_secret
       echo "$(gcloud secrets versions access latest --secret=STRIPE_PUBLISHABLE_KEY)" > /workspace/stripe_public
       echo "$(gcloud secrets versions access latest --secret=DJANGO_SETTINGS_MODULE)" > /workspace/django_settings_module
+#      echo "$(gcloud secrets versions access latest --secret=EMAIL_HOST)" > /workspace/email_host
+#      echo "$(gcloud secrets versions access latest --secret=EMAIL_HOST_PASSWORD)" > /workspace/email_host_password
+#      echo "$(gcloud secrets versions access latest --secret=EMAIL_HOST_USER)" > /workspace/email_host_user
+#      echo "$(gcloud secrets versions access latest --secret=EMAIL_PORT)" > /workspace/email_port
+#      echo "$(gcloud secrets versions access latest --secret=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY)" > /workspace/social_auth_google_oauth2_key
+#      echo "$(gcloud secrets versions access latest --secret=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET)" > /workspace/social_auth_google_oauth2_secret
 
 # Paso 2: Construir la imagen
 - name: 'gcr.io/cloud-builders/docker'
