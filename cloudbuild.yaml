@@ -1,64 +1,38 @@
 steps:
-- name: 'gcr.io/cloud-builders/gcloud'
-  id: 'verify-secrets'
-  entrypoint: 'bash'
-  args:
-    - '-c'
-    - |
-      echo "Obteniendo secretos..."
-      echo "$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/django_secret_key
-      echo "$(gcloud secrets versions access latest --secret=DJANGO_SECRET_KEY)" > /workspace/secret_key
-      echo "$(gcloud secrets versions access latest --secret=DB_NAME)" > /workspace/db_name
-      echo "$(gcloud secrets versions access latest --secret=DB_USER)" > /workspace/db_user
-      echo "$(gcloud secrets versions access latest --secret=DB_PASSWORD)" > /workspace/db_password
-      echo "$(gcloud secrets versions access latest --secret=DB_HOST)" > /workspace/db_host
-      echo "$(gcloud secrets versions access latest --secret=STRIPE_SECRET_KEY)" > /workspace/stripe_secret
-      echo "$(gcloud secrets versions access latest --secret=STRIPE_PUBLISHABLE_KEY)" > /workspace/stripe_public
-      echo "$(gcloud secrets versions access latest --secret=DJANGO_SETTINGS_MODULE)" > /workspace/django_settings_module
-      echo "$(gcloud secrets versions access latest --secret=EMAIL_HOST)" > /workspace/email_host
-      echo "$(gcloud secrets versions access latest --secret=EMAIL_HOST_PASSWORD)" > /workspace/email_host_password
-      echo "$(gcloud secrets versions access latest --secret=EMAIL_HOST_USER)" > /workspace/email_host_user
-      echo "$(gcloud secrets versions access latest --secret=EMAIL_PORT)" > /workspace/email_port
-      echo "$(gcloud secrets versions access latest --secret=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY)" > /workspace/social_auth_google_oauth2_key
-      echo "$(gcloud secrets versions access latest --secret=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET)" > /workspace/social_auth_google_oauth2_secret
-
-# Paso 2: Construir la imagen
 - name: 'gcr.io/cloud-builders/docker'
-  id: 'build'
-  waitFor: ['verify-secrets']
-  args: ['build', '-t', 'gcr.io/corpus2026/corpus-app', '.']
+  id: build
+  args: ['build', '-t', 'gcr.io/corpus-451314/corpus-app', '.']
 
-# Paso 3: Publicar la imagen
 - name: 'gcr.io/cloud-builders/docker'
-  id: 'push'
-  waitFor: [ 'verify-secrets' ]
-  args: ['push', 'gcr.io/corpus2026/corpus-app']
+  id: push
+  waitFor: ['build']
+  args: ['push', 'gcr.io/corpus-451314/corpus-app']
 
-# Paso 4: Desplegar a Cloud Run con variables de entorno
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  id: 'deploy'
+  id: deploy
   waitFor: ['push']
-  entrypoint: 'bash'
   args:
-  - '-c'
-  - |
-    secret_key=$(cat /workspace/secret_key)
-    db_name=$(cat /workspace/db_name)
-    db_user=$(cat /workspace/db_user)
-    db_password=$(cat /workspace/db_password)
-    db_host=$(cat /workspace/db_host)
-    email_host=$(cat /workspace/email_host)
-    email_host_user=$(cat /workspace/email_host_user)
-    email_host_password=$(cat /workspace/email_host_password)
-    email_port=$(cat /workspace/email_port)
-    social_auth_google_oauth2_key=$(cat /workspace/social_auth_google_oauth2_key)
-    social_auth_google_oauth2_secret=$(cat /workspace/social_auth_google_oauth2_secret)
-    
-    gcloud run deploy Corpus2026 \
-      --image gcr.io/corpus2026/corpus-app \
-      --region europe-west1 \
-      --platform managed \
-      --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,EMAIL_HOST=$email_host,EMAIL_HOST_PASSWORD=$email_host_password,EMAIL_HOST_USER=$email_host_user,EMAIL_PORT=$email_port,SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$social_auth_google_oauth2_key,SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=$social_auth_google_oauth2_secret,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host" \
-      --allow-unauthenticated
+    - run
+    - deploy
+    - corpus2026
+    - --image=gcr.io/corpus-451314/corpus-app
+    - --region=europe-west1
+    - --platform=managed
+    - --set-secrets=DJANGO_SECRET_KEY=DJANGO_SECRET_KEY:latest
+    - --set-secrets=DB_NAME=DB_NAME:latest
+    - --set-secrets=DB_USER=DB_USER:latest
+    - --set-secrets=DB_PASSWORD=DB_PASSWORD:latest
+    - --set-secrets=DB_HOST=DB_HOST:latest
+    - --set-secrets=DB_PORT=DB_PORT:latest
+    - --set-secrets=EMAIL_HOST=EMAIL_HOST:latest
+    - --set-secrets=EMAIL_HOST_USER=EMAIL_HOST_USER:latest
+    - --set-secrets=EMAIL_HOST_PASSWORD=EMAIL_HOST_PASSWORD:latest
+    - --set-secrets=EMAIL_PORT=EMAIL_PORT:latest
+    - --set-secrets=STRIPE_SECRET_KEY=STRIPE_SECRET_KEY:latest
+    - --set-secrets=STRIPE_PUBLISHABLE_KEY=STRIPE_PUBLISHABLE_KEY:latest
+    - --set-secrets=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=SOCIAL_AUTH_GOOGLE_OAUTH2_KEY:latest
+    - --set-secrets=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET:latest
+    - --update-env-vars=DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,EMAIL_USE_TLS=true
+    - --allow-unauthenticated
 
 
