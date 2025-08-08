@@ -34,7 +34,7 @@ def inicio(request):
     else:
         form = SuscripcionForm()
 
-    return render(request, "inicio.html", {"form": form})
+    return render(request, "corpus/inicio.html", {"form": form})
 
 def enviar_suscripcion(email_usuario: str) -> None:
     asunto = "[Corpus] Nueva suscripción"

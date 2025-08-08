@@ -127,4 +127,5 @@ ADMIN_SITE_TITLE = "Corpus"
 ADMIN_INDEX_TITLE = "Corpus"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_USE_TLS = True
+EMAIL_USE_SSL = True
+EMAIL_USE_TLS = False

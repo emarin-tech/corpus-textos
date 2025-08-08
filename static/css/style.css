@@ -1,3 +1,7 @@
+html {
+  scroll-behavior: smooth;
+}
+
 .corpus-title {
   font-family: 'Ibarra Real Nova', serif;
   color: #024c57;
@@ -99,3 +103,20 @@ form input {
   width: 64px;
   height: 64px;
 }
+
+:root { --nav-h: 100px; } /* ajusta a la altura real de tu navbar */
+
+
+/* Navegadores modernos: deja hueco al hacer scroll a #ancla */
+.anchor-offset { scroll-margin-top: var(--nav-h); }
+
+/* Fallback universal si lo anterior no surtiera efecto */
+.anchor-offset::before {
+  content: "";
+  display: block;
+  height: var(--nav-h);
+  margin-top: calc(var(--nav-h) * -1);
+  visibility: hidden;
+  pointer-events: none;
+}
+
