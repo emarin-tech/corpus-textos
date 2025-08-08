@@ -2,7 +2,11 @@
 {% load static %}
 
 {% block title %}Registrarse | Corpus{% endblock %}
-
+{% if messages %}
+  {% for m in messages %}
+    <div class="alert alert-{{ m.tags }}">{{ m }}</div>
+  {% endfor %}
+{% endif %}
 {% block content %}
 <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
   <div class="card shadow p-4" style="width: 100%; max-width: 420px; border-radius: 12px;">
@@ -10,21 +14,33 @@
 
     <form method="post" action="{% url 'usuarios:registro' %}">
       {% csrf_token %}
+      {{ form.non_field_errors }}
+
       <div class="mb-3">
         <label for="id_email" class="form-label">Correo electrónico</label>
-        <input type="email" name="email" class="form-control" id="id_email" required>
+        {{ form.email }}
+        {% for e in form.email.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
       </div>
 
       <div class="mb-3">
         <label for="id_password1" class="form-label">Contraseña</label>
-        <input type="password" name="password1" class="form-control" id="id_password1" required>
+        {{ form.password1 }}
+        {% for e in form.password1.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
       </div>
 
       <div class="mb-3">
         <label for="id_password2" class="form-label">Repite la contraseña</label>
-        <input type="password" name="password2" class="form-control" id="id_password2" required>
+        {{ form.password2 }}
+        {% for e in form.password2.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
       </div>
 
+      {{ form.acepta_condiciones.errors }}
+      <div class="form-check">
+        {{ form.acepta_condiciones }}
+        <label class="form-check-label" for="id_acepta_condiciones">
+          Acepto las condiciones de servicio
+        </label>
+      </div>
       <div class="d-grid mb-3">
         <button type="submit" class="btn" style="background-color: #024c57; color: white;">Registrarse</button>
       </div>

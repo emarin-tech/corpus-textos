@@ -120,3 +120,13 @@ form input {
   pointer-events: none;
 }
 
+.card { border-radius: 12px; }
+.btn-corpus { background:#024c57; color:#fff; }
+.btn-corpus:hover { filter: brightness(0.95); }
+.form-control { border-radius: 10px; }
+.form-check {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* alineación izquierda */
+  text-align: left;
+}

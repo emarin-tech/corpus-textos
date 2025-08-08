@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 # corpus/views.py
 import logging
 from django.conf import settings
@@ -53,3 +54,9 @@ def enviar_suscripcion(email_usuario: str) -> None:
         recipient_list=["info@emarintech.com"],
         fail_silently=False,
     )
+
+
+@login_required
+def dashboard(request):
+    return render(request, "dashboard.html")
+

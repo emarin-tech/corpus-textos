@@ -58,3 +58,4 @@ STATIC_ROOT = '/app/staticfiles'
 
 MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+SOCIAL_AUTH_REDIRECT_IS_HTTPS = True  # en Cloud Run detrás de HTTPS

@@ -1,11 +1,16 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
 from django.conf import settings
+from .managers import UsuarioManager  # si lo pones en otro archivo
 
-class Usuario(AbstractUser):
+
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
     # Datos personales
-    nombre = models.CharField(max_length=150)
-    apellidos = models.CharField(max_length=150)
+    nombre = models.CharField(max_length=150, blank=True, null=True)
+    apellidos = models.CharField(max_length=150, blank=True, null=True)
     titulo = models.CharField(max_length=50, blank=True, null=True)
 
     # Contacto
@@ -15,6 +20,7 @@ class Usuario(AbstractUser):
 
     # Autenticación externa
     google_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
+    objects = UsuarioManager()
     USERNAME_FIELD = 'correo_electronico'
     REQUIRED_FIELDS = ['username']
 
@@ -32,18 +38,45 @@ class Usuario(AbstractUser):
     acepta_boletin = models.BooleanField(default=False)
     acepta_publicacion_contenido = models.BooleanField(default=False)
     acepta_condiciones_servicio = models.BooleanField(default=False)
-
+    email_verificado = models.BooleanField(default=False)
+    email_verificado_en = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    # (is_superuser lo aporta PermissionsMixin, pero en tu tabla puede ser columna booleana, OK)
 
     # Tiempos
     creado = models.DateTimeField(auto_now_add=True)
     modificado = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f'{self.nombre} {self.apellidos}'
+        # usa el identificador como respaldo
+        identificador = getattr(self, 'correo_electronico', None) or getattr(self, 'email', '')
+        nombre = getattr(self, 'nombre', '') or ''
+        apellidos = getattr(self, 'apellidos', '') or ''
+        texto = (nombre + ' ' + apellidos).strip()
+        return texto or identificador or f'Usuario {self.pk}'
 
     class Meta:
         verbose_name = "usuario"
         verbose_name_plural = "usuarios"
+
+class EmailVerificacion(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    token = models.CharField(max_length=64, unique=True)
+    creado = models.DateTimeField(auto_now_add=True)
+    expira = models.DateTimeField()
+
+    @classmethod
+    def crear(cls, usuario, horas=24):
+        cls.objects.filter(usuario=usuario).delete()
+        return cls.objects.create(
+            usuario=usuario,
+            token=secrets.token_urlsafe(32),
+            expira=timezone.now() + datetime.timedelta(hours=horas),
+        )
+
+    def valido(self):
+        return timezone.now() <= self.expira
 
 class Grupo(models.Model):
     nombre = models.CharField(max_length=150)
@@ -92,3 +125,4 @@ class UsuarioGrupo(models.Model):
 
     def __str__(self):
         return f'{self.usuario} en {self.grupo}'
+
