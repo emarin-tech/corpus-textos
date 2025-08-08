@@ -70,3 +70,13 @@ DEFAULT_FROM_EMAIL = f'Corpus <{EMAIL_HOST_USER}>'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = get_secret('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = get_secret('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+# MUY IMPORTANTE: orígenes de confianza (con esquema)
+CSRF_TRUSTED_ORIGINS = [
+    "https://corpus2026-132887978036.europe-west1.run.app",
+    # "https://tu-dominio.com"
+]
