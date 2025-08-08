@@ -170,12 +170,15 @@
   <div class="container">
     <h2 class="text-center mb-5 corpus-title" style="color: #024c57;">¿Quieres recibir novedades?</h2>
     <p class="mb-4">Suscríbete para conocer nuevas funcionalidades, consejos y mejoras de Corpus.</p>
-    <form class="row justify-content-center gx-2">
+    <form method="post" class="row justify-content-center gx-2">
+      {% csrf_token %}
       <div class="col-md-4 col-sm-6 mb-2">
-        <input type="email" class="form-control" placeholder="Tu correo electrónico" required>
+        {{ form.email }}
       </div>
       <div class="col-auto mb-2">
-        <button type="submit" class="btn btn-primary" style="background-color: #024c57; border-color: #024c57;">Suscribirme</button>
+        <button type="submit" class="btn btn-primary" style="background-color: #024c57; border-color: #024c57;">
+          Suscribirme
+        </button>
       </div>
     </form>
   </div>
