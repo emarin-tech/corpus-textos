@@ -44,7 +44,7 @@
     </div>
 
     <!-- Botón CTA -->
-    <a href="/registro" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
+    <a href="{% url 'usuarios:registro' %}" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
       Pruébalo gratis
     </a>
   </div>
@@ -52,7 +52,7 @@
 
 <section style="background-color: rgba(2,76,87,0.2);">
   <div class="container py-5">
-    <h1 class="text-center mb-5 corpus-title">¿Qué es Corpus?</h1>
+    <h1 id="que-es" class="text-center mb-5 corpus-title anchor-offset">¿Qué es Corpus?</h1>
     <!-- Subtítulo -->
     <p class="text-center lead mb-5 fs-3" style="color: #333;">
       Corpus es tu <span style="color: #024c57; font-weight: 500;">archivo digital</span> de citas y referencias.<br>
@@ -64,7 +64,7 @@
 
 <section class="timeline">
   <div class="container py-5">
-    <h1 class="text-center mb-5 corpus-title">Funcionalidades</h1>
+    <h1 id="funcionalidades" class="text-center mb-5 corpus-title anchor-offset">Funcionalidades</h1>
     <!-- Feature 1 -->
     <div class="row align-items-center mb-5 section-timeline">
       <div class="col-md-6">
@@ -121,7 +121,7 @@
     </div>
     <!-- Botón CTA -->
     <div class="text-center">
-      <a href="/registro" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
+      <a href="{% url 'usuarios:registro' %}" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
         Pruébalo gratis
       </a>
     </div>
@@ -160,22 +160,25 @@
     </div>
     <!-- Botón CTA -->
     <div class="text-center">
-      <a href="/registro" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
+      <a href="{% url 'usuarios:registro' %}" class="btn btn-lg px-5 py-3" style="background-color: #024c57; color: #fff; font-weight: 600;">
         Pruébalo gratis
       </a>
     </div>
   </div>
 </section>
-<section class="py-5 bg-white text-center">
+<section class="py-5 bg-white text-center" id="ayuda">
   <div class="container">
     <h2 class="text-center mb-5 corpus-title" style="color: #024c57;">¿Quieres recibir novedades?</h2>
     <p class="mb-4">Suscríbete para conocer nuevas funcionalidades, consejos y mejoras de Corpus.</p>
-    <form class="row justify-content-center gx-2">
+    <form method="post" class="row justify-content-center gx-2">
+      {% csrf_token %}
       <div class="col-md-4 col-sm-6 mb-2">
-        <input type="email" class="form-control" placeholder="Tu correo electrónico" required>
+        {{ form.email }}
       </div>
       <div class="col-auto mb-2">
-        <button type="submit" class="btn btn-primary" style="background-color: #024c57; border-color: #024c57;">Suscribirme</button>
+        <button type="submit" class="btn btn-primary" style="background-color: #024c57; border-color: #024c57;">
+          Suscribirme
+        </button>
       </div>
     </form>
   </div>

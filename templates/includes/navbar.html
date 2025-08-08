@@ -1,6 +1,6 @@
 {% load static %}
 <!-- templates/includes/navbar.html -->
-<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-2">
+<nav class="navbar navbar-expand-lg bg-white border-bottom shadow-sm py-2 sticky-top">
   <div class="container">
     <!-- Logo con imagen -->
     <a class="navbar-brand" href="/">
@@ -16,10 +16,10 @@
     <div class="collapse navbar-collapse" id="navbarCorpus">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item mx-3">
-          <a class="corpus-nav-link nav-link text-corpus" href="">Qué es Corpus</a>
+          <a class="corpus-nav-link nav-link text-corpus" href="#que-es">Qué es Corpus</a>
         </li>
         <li class="nav-item mx-3">
-          <a class="corpus-nav-link nav-link text-corpus" href="">Funcionalidades</a>
+          <a class="corpus-nav-link nav-link text-corpus" href="#funcionalidades">Funcionalidades</a>
         </li>
         <li class="nav-item mx-3">
           <a class="corpus-nav-link nav-link text-corpus" href="">Precios</a>
@@ -30,8 +30,13 @@
       </ul>
 
       <div class="d-flex">
-        <a href="{% url 'login' %}" class="btn btn-outline-corpus me-2 corpus-login-btn">Iniciar sesión</a>
-        <a href="{% url 'registro' %}" class="btn btn-corpus corpus-registro-btn ">Pruébalo gratis</a>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'dashboard' %}" class="btn btn-corpus me-2">Ir al dashboard</a>
+        <a href="{% url 'usuarios:logout' %}" class="btn btn-outline-corpus">Salir</a>
+        {% else %}
+        <a href="{% url 'usuarios:login' %}" class="btn btn-outline-corpus me-2">Iniciar sesión</a>
+        <a href="{% url 'usuarios:registro' %}" class="btn btn-corpus">Pruébalo gratis</a>
+        {% endif %}
       </div>
     </div>
   </div>

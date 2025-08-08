@@ -1,8 +1,12 @@
 from django.urls import path
-from .views import CustomLoginView
+from .views import CustomLoginView, registro, verificar_email
 from . import views
+
+app_name = "usuarios"
 
 urlpatterns = [
     path('login/', CustomLoginView.as_view(), name='login'),
-    path('registro/', views.RegistroView.as_view(), name='registro'),
+    path("registro/", registro, name="registro"),
+    path('verificar/<uidb64>/<token>/', verificar_email, name='verificar_email'),
+    path('logout/', views.salir, name='logout'),
 ]
