@@ -58,7 +58,7 @@ steps:
       --image gcr.io/corpus2026/corpus-app \
       --region europe-west1 \
       --platform managed \
-      --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.production,EMAIL_HOST=$email_host,EMAIL_HOST_PASSWORD=$email_host_password,EMAIL_HOST_USER=$email_host_user,EMAIL_PORT=$email_port,SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$social_auth_google_oauth2_key,SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=$social_auth_google_oauth2_secret,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host" \
+      --set-env-vars "DJANGO_SETTINGS_MODULE=Corpus2026.settings.produccion,EMAIL_HOST=$email_host,EMAIL_HOST_PASSWORD=$email_host_password,EMAIL_HOST_USER=$email_host_user,EMAIL_PORT=$email_port,SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=$social_auth_google_oauth2_key,SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=$social_auth_google_oauth2_secret,DJANGO_SECRET_KEY=$secret_key,DB_NAME=$db_name,DB_USER=$db_user,DB_PASSWORD=$db_password,DB_HOST=$db_host" \
       --allow-unauthenticated
 
 
