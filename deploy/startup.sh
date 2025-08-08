@@ -56,6 +56,9 @@ python manage.py collectstatic --noinput
 echo "[INFO] Ejecutando migraciones..."
 python manage.py migrate --noinput --settings=Corpus2026.settings.produccion
 
+echo "Recolectando archivos estáticos..."
+python manage.py collectstatic --noinput --settings=Corpus2026.settings.produccion
+
 # Iniciar Gunicorn
 log_message "Starting Gunicorn..."
 exec gunicorn Corpus2026.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --threads 4 --timeout 0 --access-logfile - --error-logfile - --capture-output --enable-stdio-inheritance --log-level info
