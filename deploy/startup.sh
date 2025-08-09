@@ -57,10 +57,6 @@ connections['default'].ensure_connection()
 "
 
 
-# Recolectar archivos estáticos
-log_message "Collecting static files..."
-python manage.py collectstatic --noinput
-
 echo "[INFO] Ejecutando migraciones..."
 python manage.py migrate --noinput --settings=Corpus2026.settings.produccion
 
