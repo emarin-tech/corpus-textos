@@ -96,10 +96,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard'
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/dashboard/"
-
+LOGIN_URL = '/usuarios/login/'
+LOGIN_REDIRECT_URL = '/escritorio/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = "/escritorio/"
 LOGOUT_REDIRECT_URL = '/'
 
 # Internationalization

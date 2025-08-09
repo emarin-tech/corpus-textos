@@ -6,6 +6,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
+from django.contrib.auth.forms import AuthenticationForm
 
 from .forms import RegistroForm
 from .models import Usuario
@@ -53,7 +54,7 @@ def registro(request):
 
                 enviar_email_verificacion(user, request)
                 messages.success(request, "Cuenta creada. Revisa tu correo para verificarla.")
-                return redirect("inicio")
+                return redirect('corpus:inicio')
 
             except IntegrityError as e:
                 print(">>> INTEGRITY ERROR:")
@@ -62,7 +63,7 @@ def registro(request):
             except Exception:
                 traceback.print_exc()
                 messages.warning(request, "Cuenta creada, pero no pudimos enviar el email de verificación ahora.")
-                return redirect("inicio")
+                return redirect('corpus:inicio')
         else:
             print(">>> FORM INVALID:", form.errors.as_json())
             messages.error(request, "Corrige los errores del formulario.")
@@ -86,15 +87,40 @@ def verificar_email(request, uidb64, token):
         user.email_verificado = True
         user.is_active = True
         user.save(update_fields=['email_verificado', 'is_active'])
+        user.backend = 'django.contrib.auth.backends.ModelBackend'
         auth_login(request, user)  # <-- usa el alias correcto
         messages.success(request, 'Correo verificado. ¡Bienvenido!')
-        return redirect('inicio')  # o 'dashboard' si ya existe esa URL
+        return redirect('corpus:escritorio')
     else:
         messages.error(request, 'Enlace inválido o caducado.')
-        return redirect('dashboard')  # evita mandar a 'dashboard' si no existe
+        return redirect('corpus:inicio')  # evita mandar a 'dashboard' si no existe
 
 
 def salir(request):
     logout(request)
     messages.success(request, "Has cerrado sesión.")
-    return redirect('inicio')  # tu URL de la home
+    return redirect('corpus:inicio')  # tu URL de la home
+
+def login_view(request):
+    if request.method == "POST":
+        email = request.POST.get("username")  # O 'email' si lo cambiaste en el form
+        password = request.POST.get("password")
+        user = authenticate(request, username=email, password=password)
+
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            auth_login(request, form.get_user())
+            return redirect("corpus:escritorio")
+        else:
+            return render(request, "usuarios/login.html", {"form": form})
+        #
+        # if user is not None:
+        #     auth_login(request, user)
+        #     return redirect("corpus:escritorio")
+        # else:
+        #     return render(request, "usuarios/login.html", {
+        #         "error": "Credenciales inválidas"
+        #     })
+
+    form = AuthenticationForm()
+    return render(request, "usuarios/login.html", {"form": form})
