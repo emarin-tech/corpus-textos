@@ -6,10 +6,6 @@ __pycache__/
 # Cython debug symbols
 cython_debug/
 
-# Django migrations
-*/migrations/*.py
-*/migrations/*.pyc
-
 # Environments
 .env
 .venv
