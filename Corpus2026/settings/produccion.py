@@ -63,9 +63,12 @@ SOCIAL_AUTH_REDIRECT_IS_HTTPS = True  # en Cloud Run detrás de HTTPS
 EMAIL_HOST = get_secret('EMAIL_HOST')           # Ej: smtp.gmail.com
 EMAIL_HOST_USER = get_secret('EMAIL_HOST_USER') # Ej: info@emarintech.com
 EMAIL_HOST_PASSWORD = get_secret('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = get_secret('EMAIL_PORT')
+EMAIL_PORT = get_secret('EMAIL_PORT', cast=int)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 DEFAULT_FROM_EMAIL = f'Corpus <{EMAIL_HOST_USER}>'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = get_secret('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY')
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = get_secret('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET')
