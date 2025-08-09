@@ -1,7 +1,10 @@
 html {
   scroll-behavior: smooth;
 }
-
+html, body {
+  height: 100%;
+  margin: 0;
+}
 .corpus-title {
   font-family: 'Ibarra Real Nova', serif;
   color: #024c57;

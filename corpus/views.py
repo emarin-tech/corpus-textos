@@ -24,14 +24,14 @@ def inicio(request):
             except BadHeaderError:
                 logger.exception("Cabecera inválida en envío de suscripción")
                 messages.error(request, "No se ha podido mandar el mensaje por un error de cabecera.")
-                return redirect("inicio")
+                return redirect("corpus:inicio")
             except Exception:
                 logger.exception("Error enviando suscripción")
                 messages.error(request, "No se ha podido mandar el mensaje. Inténtalo más tarde.")
-                return redirect("inicio")
+                return redirect("corpus:inicio")
 
             messages.success(request, "Mensaje enviado, ¡gracias por suscribirte!")
-            return redirect("inicio")
+            return redirect("corpus:inicio")
     else:
         form = SuscripcionForm()
 
@@ -55,8 +55,6 @@ def enviar_suscripcion(email_usuario: str) -> None:
         fail_silently=False,
     )
 
-
 @login_required
-def dashboard(request):
-    return render(request, "dashboard.html")
-
+def escritorio(request):
+    return render(request, "corpus/escritorio.html")
