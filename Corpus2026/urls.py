@@ -26,8 +26,11 @@ urlpatterns = [
     path("usuarios/", include(("usuarios.urls", "usuarios"), namespace="usuarios")),
     path('accounts/', include('django.contrib.auth.urls')),  # Puede quedar para logout u otras
     path('', include('social_django.urls', namespace='social')),
+    path("publicaciones/", include("publicaciones.urls", namespace="publicaciones")),
 ]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
 
