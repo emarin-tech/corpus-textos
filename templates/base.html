@@ -63,7 +63,14 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS (opcional) -->
     <script src="{% static 'js/main.js' %}"></script>
-
-    {% block extra_js %}{% endblock %}
+    <script>
+    function inicializarTooltips() {
+        const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    }
+    </script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
