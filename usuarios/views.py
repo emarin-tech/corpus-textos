@@ -15,6 +15,11 @@ from .models import Usuario
 from .utils import enviar_email_verificacion
 from .tokens import email_token_generator
 import traceback
+import logging
+from django.core.files.storage import default_storage
+from google.cloud import storage
+from usuarios.models import avatar_upload_path  # tu función upload_to
+logger = logging.getLogger(__name__)
 
 
 class CustomLoginView(LoginView):
@@ -143,18 +148,64 @@ def ajustes_usuario(request):
         correo_form = UsuarioCorreoForm(instance=u, usuario=u)
 
         if seccion == "cuenta":
-            perfil_form = UsuarioPerfilForm(request.POST, request.FILES, instance=u)  # para la foto
+            perfil_form = UsuarioPerfilForm(request.POST, request.FILES, instance=u)  # trae 'foto'
             correo_form = UsuarioCorreoForm(request.POST, instance=u, usuario=u)
+
             if perfil_form.is_valid() and correo_form.is_valid():
-                perfil_form.save()
+
+                # 1) Correo (como ya lo hacías)
                 if not correo_form.fields["correo_electronico"].disabled:
                     old = u.correo_electronico
                     usr = correo_form.save(commit=False)
                     if usr.correo_electronico != old:
                         usr.email_verificado = False
                     usr.save(update_fields=["correo_electronico", "email_verificado"])
+
+                # 2) Foto (subida explícita + fallback a GCS client)
+                archivo = request.FILES.get("foto")
+                if archivo:
+                    destino = avatar_upload_path(u, archivo.name)  # p.ej. avatares/ava_XXXX.png
+
+                    # (opcional) borrar avatar anterior
+                    if u.foto and u.foto.name:
+                        try:
+                            u.foto.storage.delete(u.foto.name)
+                        except Exception as e:
+                            logger.warning("No pude borrar avatar anterior: %s", e)
+
+                    try:
+                        # INTENTO 1: vía django-storages (debería ir a GCS en prod)
+                        u.foto.save(destino, archivo, save=True)
+
+                        # Verificar que realmente existe
+                        if not default_storage.exists(destino):
+                            raise RuntimeError("default_storage.save no creó el objeto")
+                    except Exception as e:
+                        logger.exception("Fallo subiendo con default_storage: %s", e)
+
+                        # INTENTO 2 (fallback): cliente oficial de GCS
+                        try:
+                            bucket_name = os.environ.get("GS_BUCKET_NAME", "corpus-imagenes")
+                            client = storage.Client()
+                            bucket = client.bucket(bucket_name)
+                            blob = bucket.blob(destino)
+                            archivo.seek(0)  # MUY importante antes de reusar el stream
+                            blob.upload_from_file(archivo, content_type=getattr(archivo, "content_type", None))
+
+                            # Enlaza el path al campo sin re-subir
+                            u.foto.name = destino
+                            u.save(update_fields=["foto"])
+                        except Exception as e2:
+                            logger.exception("Fallo también con cliente GCS: %s", e2)
+                            messages.error(request, "No se pudo subir la foto. Revisa los logs.")
+                            return redirect("usuarios:ajustes")
+                else:
+                    # Si no vino archivo, guarda otros campos del perfil si tuvieras
+                    perfil_form.save()
+
                 messages.success(request, "Cuenta actualizada.")
                 return redirect("usuarios:ajustes")
+
             else:
                 messages.error(request, "Revisa los campos: hay errores en el formulario.")
 

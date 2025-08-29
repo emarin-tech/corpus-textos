@@ -7,11 +7,12 @@ from .managers import UsuarioManager
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 
-class Usuario(AbstractBaseUser, PermissionsMixin):
-    def avatar_upload_path(instance, filename):
-        name, ext = os.path.splitext(filename)
-        return f"avatares/ava_{secrets.token_urlsafe(8)}{ext.lower()}"
 
+def avatar_upload_path(instance, filename):
+    name, ext = os.path.splitext(filename)
+    return f"avatares/ava_{secrets.token_urlsafe(8)}{ext.lower()}"
+
+class Usuario(AbstractBaseUser, PermissionsMixin):
     # Datos personales
     nombre = models.CharField(max_length=150, blank=True, null=True)
     apellidos = models.CharField(max_length=150, blank=True, null=True)
