@@ -221,3 +221,42 @@ def diag_storage(request):
         "saved_path": path,
         "served_url": url,
     })
+
+# usuarios/views_diag.py
+import os, random, string
+from django.http import JsonResponse, HttpResponseForbidden
+from django.views.decorators.csrf import csrf_exempt
+from google.cloud import storage
+
+def _rand(n=6): return "".join(random.choice(string.ascii_letters) for _ in range(n))
+
+@csrf_exempt
+def diag_gcs(request):
+    # protege un poco el endpoint
+    if not (request.user.is_authenticated and request.user.is_superuser):
+        return HttpResponseForbidden("Solo superusuarios")
+
+    results = {}
+    try:
+        bucket_name = os.environ.get("GS_BUCKET_NAME", "corpus-imagenes")
+        client = storage.Client()           # usa la service account de Cloud Run
+        b = client.bucket(bucket_name)
+
+        # 1) subir un objeto "a mano"
+        key = f"diagnostics/pyclient_{_rand()}.txt"
+        blob = b.blob(key)
+        blob.upload_from_string(b"ok", content_type="text/plain")
+
+        # 2) listar lo que haya bajo diagnostics/
+        listed = [bl.name for bl in client.list_blobs(bucket_name, prefix="diagnostics/")]
+
+        results.update({
+            "bucket": bucket_name,
+            "uploaded_key": key,
+            "public_url": f"https://storage.googleapis.com/{bucket_name}/{key}",
+            "listed_sample": listed[:20],
+        })
+    except Exception as e:
+        results["exception"] = repr(e)
+
+    return JsonResponse(results)
