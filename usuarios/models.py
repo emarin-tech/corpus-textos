@@ -65,6 +65,11 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
         verbose_name = "usuario"
         verbose_name_plural = "usuarios"
 
+# --- COMPATIBILIDAD PARA MIGRACIONES ANTIGUAS ---
+# Algunas migraciones (como 0008) referencian usuarios.models.Usuario.avatar_upload_path.
+# Adjuntamos el atributo estático para que ese import no falle.
+Usuario.avatar_upload_path = staticmethod(avatar_upload_path)
+
 class EmailVerificacion(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     token = models.CharField(max_length=64, unique=True)
