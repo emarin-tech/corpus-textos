@@ -6,7 +6,7 @@
 {% block content %}
 <div class="d-flex h-100" style="overflow: hidden;">
   <!-- Sidebar -->
-  <aside class="d-flex flex-column align-items-center py-3 border-end" style="width: 60px; background-color: white; border-color: #024c57;">
+  <aside class="d-flex flex-column align-items-center py-3 border-end">
     <a href="{% url 'corpus:escritorio' %}" class="mb-4 text-decoration-none" title="Inicio">
       <i data-lucide="house" class="lucide-icon"></i>
     </a>
@@ -26,17 +26,17 @@
       <i data-lucide="notebook-pen" class="lucide-icon"></i>
     </a>
     <div class="mt-auto d-flex flex-column align-items-center">
-      <a href="#" class="mb-3 text-decoration-none" title="Ajustes">
+      <a href="{% url 'usuarios:ajustes' %}" class="mb-4 text-decoration-none" title="Ajustes">
         <i data-lucide="settings" class="lucide-icon"></i>
       </a>
-      <a href="{% url 'logout' %}" class="mb-3 text-decoration-none" title="Cerrar sesión">
+      <a href="{% url 'logout' %}" class="mb-4 text-decoration-none" title="Cerrar sesión">
         <i data-lucide="log-out" class="lucide-icon"></i>
       </a>
     </div>
   </aside>
 
   <!-- Main content -->
-  <div class="flex-grow-1 bg-light p-4 overflow-auto">
+  <div class="flex-grow-1 main-flex p-4 overflow-auto">
     <!-- Selector de contexto -->
     <div class="d-flex justify-content-between align-items-center mb-4 pb-2" style="border-bottom: solid 1px rgba(2,76,87,0.5);">
       <h2 class="mb-0 titulo-escritorio">Autores</h2>
@@ -46,7 +46,7 @@
             👤 Mi cuenta personal
           </button>
           <ul class="dropdown-menu session-dropdown dropdown-menu-end">
-            <li><a class="dropdown-item" href="#">Mi cuenta personal</a></li>
+            <li><a class="dropdown-item" href="/usuarios/ajustes">Mi cuenta personal</a></li>
             <li><a class="dropdown-item" href="#">Grupo: Asociación Española</a></li>
           </ul>
         </div>

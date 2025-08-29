@@ -36,20 +36,17 @@
 
     {% include 'includes/navbar.html' %}
 
-    {% if messages %}
-    <div class="container mt-3">
-      {% for message in messages %}
-        <div class="alert
-          {% if message.tags == 'success' %}alert-success
-          {% elif message.tags == 'error' %}alert-danger
-          {% else %}alert-info{% endif %}
-          alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-         </div>
-      {% endfor %}
+{% if messages %}
+  {% for message in messages %}
+    <div class="django-message d-none"
+         data-level="{% if message.tags == 'success' %}success
+                     {% elif 'error' in message.tags %}danger
+                     {% elif 'warning' in message.tags %}warning
+                     {% else %}info{% endif %}">
+      {{ message }}
     </div>
-    {% endif %}
+  {% endfor %}
+{% endif %}
 
     <main class="flex-grow-1 p-0 m-0">
         {% block content %}
