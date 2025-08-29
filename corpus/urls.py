@@ -6,4 +6,5 @@ app_name = "corpus"
 urlpatterns = [
     path('', views.inicio, name='inicio'),
     path("escritorio/", views.escritorio, name="escritorio"),
+    path("diag/storage/", diag_storage, name="diag_storage"),
 ]
