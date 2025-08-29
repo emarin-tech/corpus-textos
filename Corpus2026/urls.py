@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from usuarios.views_diag import diag_storage  # ajusta el import si usaste otra app
 
 
 urlpatterns = [
@@ -26,6 +27,7 @@ urlpatterns = [
     path("usuarios/", include(("usuarios.urls", "usuarios"), namespace="usuarios")),
     path('accounts/', include('django.contrib.auth.urls')),  # Puede quedar para logout u otras
     path('', include('social_django.urls', namespace='social')),
+    path("diag/storage/", diag_storage, name="diag_storage"),
     path("publicaciones/", include("publicaciones.urls", namespace="publicaciones")),
 ]
 
