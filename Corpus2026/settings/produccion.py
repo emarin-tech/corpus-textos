@@ -1,5 +1,6 @@
 from .base import *
 import os
+INSTALLED_APPS += ["storages"]
 
 # a ver
 # Inicializa el cliente de Secret Manager

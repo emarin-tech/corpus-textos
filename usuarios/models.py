@@ -1,5 +1,5 @@
 import datetime
-import secrets
+import os, secrets
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -8,6 +8,10 @@ from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 
 class Usuario(AbstractBaseUser, PermissionsMixin):
+    def avatar_upload_path(instance, filename):
+        name, ext = os.path.splitext(filename)
+        return f"avatares/ava_{secrets.token_urlsafe(8)}{ext.lower()}"
+
     # Datos personales
     nombre = models.CharField(max_length=150, blank=True, null=True)
     apellidos = models.CharField(max_length=150, blank=True, null=True)
@@ -16,7 +20,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     # Contacto
     correo_electronico = models.EmailField(unique=True)
     telefono = models.CharField(max_length=20, blank=True, null=True)
-    foto = models.ImageField(upload_to='autores/fotos/', null=True, blank=True)
+    foto = models.ImageField(upload_to=avatar_upload_path, null=True, blank=True)
 
     # Autenticación externa
     google_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
