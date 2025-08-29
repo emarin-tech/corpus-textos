@@ -196,3 +196,28 @@ def ajustes_usuario(request):
         "correo_form": correo_form,
         "tiene_google": bool(getattr(u, "google_id", None)),
     })
+
+# usuarios/views_diag.py  (o core/views.py)
+from django.conf import settings
+from django.http import JsonResponse, HttpResponseForbidden
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage
+
+def diag_storage(request):
+    # seguridad mínima: solo superusers (ajústalo si quieres)
+    user = getattr(request, "user", None)
+    if not (user and user.is_authenticated and user.is_superuser):
+        return HttpResponseForbidden("Solo superusuarios")
+
+    # guarda un archivo de prueba con el storage por defecto
+    path = default_storage.save("diagnostics/test.txt", ContentFile(b"ok"))
+    url = default_storage.url(path)
+
+    return JsonResponse({
+        "DJANGO_SETTINGS_MODULE": getattr(settings, "SETTINGS_MODULE", None),
+        "DEFAULT_FILE_STORAGE": getattr(settings, "DEFAULT_FILE_STORAGE", "FS"),
+        "MEDIA_URL": settings.MEDIA_URL,
+        "GS_BUCKET_NAME": getattr(settings, "GS_BUCKET_NAME", None),
+        "saved_path": path,
+        "served_url": url,
+    })
