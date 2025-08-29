@@ -140,6 +140,8 @@ form input {
   border-bottom-right-radius: 17px;
   border-top-left-radius: 17px;
   border-top-right-radius: 17px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 a.active .lucide-icon {
   width: 42px;
@@ -153,7 +155,7 @@ a.active .lucide-icon {
   border-top-right-radius: 17px;
 }
 a.active {
-  background-color: #e9f4f5;
+/*  background-color: #e9f4f5; */
   border-radius: 0.375rem;
 }
 .lucide-icon-accion {
@@ -242,3 +244,27 @@ a.active {
 }
 
 
+.sidebar-avatar{
+  width:36px; height:36px; border-radius:50%;
+  object-fit:cover; border:1px solid #e5e7eb;
+}
+.account-btn:hover .sidebar-avatar{ filter:brightness(0.95); }
+
+/* Dropdown algo más ancho para nombres de grupo largos */
+.dropdown-menu{
+  min-width: 220px;
+}
+.dropdown-menu .lucide{ width:16px; height:16px; }
+
+:root{ --sidebar-width: 60px; }
+
+.sidebar-fixed{
+  flex: 0 0 var(--sidebar-width);
+  width: var(--sidebar-width);
+  min-width: var(--sidebar-width);
+  background:#fff;
+  border-right: 1px solid #024c57;
+}
+
+/* para el panel derecho en layouts con d-flex */
+.main-flex { min-width: 0; }

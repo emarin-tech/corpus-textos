@@ -1,0 +1,232 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ajustes | Corpus{% endblock %}
+
+{% block content %}
+<style>
+  /* Estilos compactos para desktop */
+  .card-ajuste{
+    background:#fff;
+    border:1px solid #e9ecef;
+    border-radius:16px;
+    box-shadow:0 2px 8px rgba(0,0,0,.04);
+  }
+  .card-ajuste .form-control, .card-ajuste .form-select{
+    height:38px; padding:.45rem .7rem;
+  }
+  .card-ajuste .form-check{ margin-bottom:.4rem; }
+  .btn-brand{ background:#024c57; border-color:#024c57; color:#fff; }
+  .btn-brand:hover{ filter:brightness(.95); color:#fff; }
+  .avatar-md{
+    width:96px; height:96px; object-fit:cover; border-radius:50%;
+    border:1px solid #e5e7eb;
+  }
+</style>
+
+<div class="d-flex h-100" style="overflow: hidden;">
+  <!-- Sidebar -->
+  <aside class="d-flex flex-column align-items-center py-3 border-end">
+    <a href="{% url 'corpus:escritorio' %}" class="mb-4 text-decoration-none" title="Inicio">
+      <i data-lucide="house" class="lucide-icon"></i>
+    </a>
+    <a href="{% url 'publicaciones:autores_inicio' %}" class="mb-4 text-decoration-none" title="Autores">
+      <i data-lucide="user-pen" class="lucide-icon"></i>
+    </a>
+    <a href="#" class="mb-4 text-decoration-none" title="Publicaciones">
+      <i data-lucide="book-open" class="lucide-icon"></i>
+    </a>
+    <a href="#" class="mb-4 text-decoration-none" title="Citas">
+      <i data-lucide="scan-text" class="lucide-icon"></i>
+    </a>
+    <a href="#" class="mb-4 text-decoration-none" title="Buscar">
+      <i data-lucide="search" class="lucide-icon"></i>
+    </a>
+    <a href="#" class="mb-4 text-decoration-none" title="Borradores IA">
+      <i data-lucide="notebook-pen" class="lucide-icon"></i>
+    </a>
+    <div class="mt-auto d-flex flex-column align-items-center">
+      <a href="{% url 'usuarios:ajustes' %}" class="mb-4 text-decoration-none active" title="Ajustes">
+        <i data-lucide="settings" class="lucide-icon"></i>
+      </a>
+      <a href="{% url 'logout' %}" class="mb-4 text-decoration-none" title="Cerrar sesión">
+        <i data-lucide="log-out" class="lucide-icon"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-grow-1 main-flex p-4 overflow-auto">
+    <div class="d-flex justify-content-between align-items-center mb-3 pb-2"
+         style="border-bottom:1px solid rgba(2,76,87,.5);">
+      <h2 class="mb-0 titulo-escritorio">Ajustes de tu cuenta</h2>
+    </div>
+
+    {% if messages %}
+  {% for message in messages %}
+    <div class="django-message d-none"
+         data-level="{% if message.tags == 'success' %}success{% elif 'error' in message.tags %}danger{% elif 'warning' in message.tags %}warning{% else %}info{% endif %}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+    <!-- DOS COLUMNAS INDEPENDIENTES (desktop) -->
+    <div class="row g-4">
+      <!-- Columna izquierda: Cuenta + Privacidad -->
+      <div class="col-6 d-flex flex-column gap-4">
+        <!-- Cuenta -->
+        <div class="card-ajuste p-3">
+          <h5 class="mb-3">Cuenta</h5>
+          <div class="d-flex align-items-center gap-3 mb-3">
+            {% if request.user.foto %}
+              <img class="avatar-md" src="{{ request.user.foto.url }}" alt="Avatar">
+            {% else %}
+              <img class="avatar-md" src="{% static 'img/avatar-placeholder.png' %}" alt="Avatar">
+            {% endif %}
+            <div class="small">
+              <div class="fw-semibold">{{ request.user.correo_electronico }}</div>
+              {% if request.user.email_verificado %}
+                <span class="badge bg-success">Email verificado</span>
+              {% else %}
+                <span class="badge bg-secondary">Email no verificado</span>
+              {% endif %}
+              {% if tiene_google %}
+                <span class="badge" style="background:#34a853;">Google vinculado</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="seccion" value="cuenta">
+            <div class="mb-2">
+              <label class="form-label">Correo electrónico</label>
+              {{ correo_form.correo_electronico }}
+              {% if correo_form.correo_electronico.help_text %}
+                <div class="form-text">{{ correo_form.correo_electronico.help_text }}</div>
+              {% endif %}
+              {% for e in correo_form.correo_electronico.errors %}
+                <div class="text-danger small">{{ e }}</div>
+              {% endfor %}
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Foto de perfil</label>
+              {{ perfil_form.foto }}
+            </div>
+            <button type="submit" class="btn btn-brand btn-sm">Guardar cambios</button>
+          </form>
+        </div>
+
+        <!-- Privacidad y comunicaciones -->
+        <div class="card-ajuste p-3">
+          <h5 class="mb-3">Privacidad y comunicaciones</h5>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="seccion" value="privacidad">
+            <div class="row row-cols-2">
+              {% for field in privacidad_form %}
+                <div class="col mb-2">
+                  <div class="form-check">
+                    {{ field }}
+                    <label class="form-check-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+            <div class="d-flex gap-2 mt-2">
+              <button type="submit" class="btn btn-brand btn-sm">Guardar preferencias</button>
+              <a href="{% url 'corpus:escritorio' %}" class="btn btn-outline-secondary btn-sm">Cancelar</a>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Columna derecha: Datos personales + Dirección -->
+      <div class="col-6 d-flex flex-column gap-4">
+        <!-- Datos personales -->
+        <div class="card-ajuste p-3">
+          <h5 class="mb-3">Datos personales</h5>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="seccion" value="datos">
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label">Nombre</label>
+                {{ perfil_form.nombre }}
+              </div>
+              <div class="col-6">
+                <label class="form-label">Apellidos</label>
+                {{ perfil_form.apellidos }}
+              </div>
+              <div class="col-6">
+                <label class="form-label">Título</label>
+                {{ perfil_form.titulo }}
+              </div>
+              <div class="col-6">
+                <label class="form-label">Teléfono</label>
+                {{ perfil_form.telefono }}
+              </div>
+            </div>
+            <button type="submit" class="btn btn-brand btn-sm mt-3">Guardar datos</button>
+          </form>
+        </div>
+
+        <!-- Dirección -->
+        <div class="card-ajuste p-3">
+          <h5 class="mb-3">Dirección</h5>
+          <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="seccion" value="direccion">
+            <div class="mb-2">
+              <label class="form-label">Calle</label>
+              {{ perfil_form.calle }}
+            </div>
+            <div class="row g-3">
+              <div class="col-6">
+                <label class="form-label">Ciudad</label>
+                {{ perfil_form.ciudad }}
+              </div>
+              <div class="col-6">
+                <label class="form-label">Provincia</label>
+                {{ perfil_form.provincia }}
+              </div>
+              <div class="col-6">
+                <label class="form-label">Código postal</label>
+                {{ perfil_form.codigo_postal }}
+              </div>
+              <div class="col-6">
+                <label class="form-label">País</label>
+                {{ perfil_form.pais }}
+              </div>
+            </div>
+            <button type="submit" class="btn btn-brand btn-sm mt-3">Guardar dirección</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (window.lucide) { lucide.createIcons(); }
+
+    // Vista previa de la foto
+    const fotoInput = document.querySelector('input[name="foto"]');
+    if (fotoInput) {
+      fotoInput.addEventListener('change', (e) => {
+        const f = e.target.files?.[0]; if (!f) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          const img = document.querySelector('.avatar-md');
+          if (img) img.src = reader.result;
+        };
+        reader.readAsDataURL(f);
+      });
+    }
+  });
+</script>
+{% endblock %}

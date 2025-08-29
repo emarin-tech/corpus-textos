@@ -81,3 +81,17 @@ CSRF_TRUSTED_ORIGINS = [
     "https://corpus2026-132887978036.europe-west1.run.app",
     # "https://tu-dominio.com"
 ]
+
+import os
+
+USE_GCS = os.environ.get("USE_GCS") == "1"
+if USE_GCS:
+    INSTALLED_APPS += ["storages"]
+    DEFAULT_FILE_STORAGE = "storages.backends.gcloud.GoogleCloudStorage"
+    GS_BUCKET_IMAGENES_NOMBRE = os.environ.get("GS_BUCKET_IMAGENES_NOMBRE", "corpus-imagenes")
+    GS_DEFAULT_ACL = None  # acceso uniforme en el bucket
+    GS_OBJECT_PARAMETERS = {"cache_control": "public, max-age=86400"}
+    MEDIA_URL = f"https://storage.googleapis.com/{GS_BUCKET_IMAGENES_NOMBRE}/"
+else:
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"

@@ -1,18 +1,19 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.views.decorators.http import require_http_methods
+from .forms import UsuarioPerfilForm, UsuarioPrivacidadForm, UsuarioCorreoForm
 from django.contrib.auth import logout
 from django.contrib.auth import authenticate, login as auth_login, get_user_model
 from django.db import IntegrityError, connection
-from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
-from django.contrib import messages
 from django.utils.http import urlsafe_base64_decode
 from django.conf import settings
 from django.contrib.auth.forms import AuthenticationForm
-
 from .forms import RegistroForm
 from .models import Usuario
 from .utils import enviar_email_verificacion
 from .tokens import email_token_generator
-
 import traceback
 
 
@@ -124,3 +125,74 @@ def login_view(request):
 
     form = AuthenticationForm()
     return render(request, "usuarios/login.html", {"form": form})
+
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_http_methods
+from .forms import UsuarioPerfilForm, UsuarioPrivacidadForm, UsuarioCorreoForm
+
+@login_required
+@require_http_methods(["GET", "POST"])
+def ajustes_usuario(request):
+    u = request.user
+    seccion = request.POST.get("seccion")
+    if request.method == "POST":
+        # Inicializa todos SIN bind para poder rellenarlos luego según la sección
+        perfil_form = UsuarioPerfilForm(instance=u)
+        privacidad_form = UsuarioPrivacidadForm(instance=u)
+        correo_form = UsuarioCorreoForm(instance=u, usuario=u)
+
+        if seccion == "cuenta":
+            perfil_form = UsuarioPerfilForm(request.POST, request.FILES, instance=u)  # para la foto
+            correo_form = UsuarioCorreoForm(request.POST, instance=u, usuario=u)
+            if perfil_form.is_valid() and correo_form.is_valid():
+                perfil_form.save()
+                if not correo_form.fields["correo_electronico"].disabled:
+                    old = u.correo_electronico
+                    usr = correo_form.save(commit=False)
+                    if usr.correo_electronico != old:
+                        usr.email_verificado = False
+                    usr.save(update_fields=["correo_electronico", "email_verificado"])
+                messages.success(request, "Cuenta actualizada.")
+                return redirect("usuarios:ajustes")
+            else:
+                messages.error(request, "Revisa los campos: hay errores en el formulario.")
+
+        elif seccion == "datos":
+            perfil_form = UsuarioPerfilForm(request.POST, instance=u)
+            if perfil_form.is_valid():
+                perfil_form.save()
+                messages.success(request, "Datos personales guardados.")
+                return redirect("usuarios:ajustes")
+            else:
+                messages.error(request, "Revisa los campos: hay errores en el formulario.")
+
+        elif seccion == "privacidad":
+            privacidad_form = UsuarioPrivacidadForm(request.POST, instance=u)
+            if privacidad_form.is_valid():
+                privacidad_form.save()
+                messages.success(request, "Preferencias actualizadas.")
+                return redirect("usuarios:ajustes")
+            else:
+                messages.error(request, "Revisa los campos: hay errores en el formulario.")
+
+        elif seccion == "direccion":
+            perfil_form = UsuarioPerfilForm(request.POST, instance=u)
+            if perfil_form.is_valid():
+                perfil_form.save()
+                messages.success(request, "Dirección guardada.")
+                return redirect("usuarios:ajustes")
+            else:
+                messages.error(request, "Revisa los campos: hay errores en el formulario.")
+
+    else:
+        perfil_form = UsuarioPerfilForm(instance=u)
+        privacidad_form = UsuarioPrivacidadForm(instance=u)
+        correo_form = UsuarioCorreoForm(instance=u, usuario=u)
+
+    return render(request, "usuarios/ajustes.html", {
+        "perfil_form": perfil_form,
+        "privacidad_form": privacidad_form,
+        "correo_form": correo_form,
+        "tiene_google": bool(getattr(u, "google_id", None)),
+    })

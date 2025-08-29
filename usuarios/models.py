@@ -1,9 +1,9 @@
-from django.contrib.auth.models import AbstractUser, PermissionsMixin
+import datetime
+import secrets
 from django.db import models
 from django.conf import settings
-from .managers import UsuarioManager  # si lo pones en otro archivo
-
-
+from django.utils import timezone
+from .managers import UsuarioManager
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 
@@ -22,7 +22,7 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
     google_id = models.CharField(max_length=255, unique=True, blank=True, null=True)
     objects = UsuarioManager()
     USERNAME_FIELD = 'correo_electronico'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     # Dirección
     calle = models.CharField(max_length=255, blank=True, null=True)
