@@ -125,6 +125,15 @@ class Fuente(models.Model):
     modificado = models.DateTimeField(auto_now=True)
     modificado_por = models.ForeignKey(Usuario, on_delete=models.SET_NULL, related_name='fuentes_modificadas', null=True, blank=True)
 
+    resumen = models.TextField(
+        null=True, blank=True,
+        help_text="Resumen del documento (editable, puede ser sugerido por IA)."
+    )
+    abstract = models.TextField(
+        null=True, blank=True,
+        help_text="Abstract original en otro idioma (si lo hubiera)."
+    )
+
     propietario_usuario = models.ForeignKey(
         Usuario,
         on_delete=models.SET_NULL,
