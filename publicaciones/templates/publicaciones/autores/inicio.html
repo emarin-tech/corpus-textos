@@ -62,7 +62,7 @@
                 <h5 class="modal-title" id="modalAutorLabel">Nuevo autor</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
               </div>
-                <form id="form-autor" enctype="multipart/form-data" onsubmit="return false;">
+                <form id="form-autor" enctype="multipart/form-data" data-endpoint="{% url 'publicaciones:crear_autor' %}">
                 {% csrf_token %}
                   <input type="hidden" name="id" id="autor-id"> <!-- Esto es CLAVE -->
                   <div class="modal-body">
@@ -107,6 +107,48 @@
             </div>
           </div>
         </div>
+<!-- Modal: confirmar borrado -->
+<div class="modal fade" id="modalConfirmBorrarAutor" tabindex="-1" aria-labelledby="modalConfirmBorrarAutorLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalConfirmBorrarAutorLabel">Eliminar autor</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p id="textoConfirmBorrarAutor" class="mb-0"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-danger" id="btnConfirmBorrarAutor">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: no se puede borrar (tiene publicaciones) -->
+<div class="modal fade" id="modalBloqueoBorrarAutor" tabindex="-1" aria-labelledby="modalBloqueoBorrarAutorLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header" style="border-bottom-color: rgba(2,76,87,0.15);">
+        <h5 class="modal-title" id="modalBloqueoBorrarAutorLabel">No se puede eliminar</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <div class="d-flex align-items-start">
+          <i data-lucide="shield-alert" class="me-2" style="width: 28px; height: 28px;"></i>
+          <div>
+            <p id="textoBloqueoBorrarAutor" class="mb-2"></p>
+            <small class="text-muted">Desvincula o reasigna las fuentes/publicaciones antes de eliminar este autor.</small>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" style="border-top-color: rgba(2,76,87,0.15);">
+        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" style="background-color:#024c57; border-color:#024c57;">Entendido</button>
+      </div>
+    </div>
+  </div>
+</div>
       </div>
 
 
@@ -125,15 +167,15 @@
 
 {% block extra_scripts %}
 <script>
-  function cargarAutores(page = 1) {
-    fetch(`/publicaciones/autores/ajax/?page=${page}`)
-      .then(response => response.text())
-      .then(html => {
-        console.log("→ HTML recibido:", html);
-        document.getElementById('resultados-autores').innerHTML = html;
-        lucide.createIcons();
-        inicializarTooltips();
-        document.querySelectorAll('#resultados-autores .page-link').forEach(link => {
+function cargarAutores(page = 1) {
+  fetch(`/publicaciones/autores/ajax/?page=${page}`)
+    .then(response => response.text())
+    .then(html => {
+      console.log("→ HTML recibido:", html);
+      document.getElementById('resultados-autores').innerHTML = html;
+      lucide.createIcons();
+      inicializarTooltips();
+      document.querySelectorAll('#resultados-autores .page-link').forEach(link => {
         link.addEventListener('click', function (e) {
           e.preventDefault();
           const page = this.getAttribute('href').split('page=')[1];
@@ -142,68 +184,157 @@
         });
       });
     });
-  }
-  let formAutor;
-  // Al cargar la página
-  document.addEventListener('DOMContentLoaded', () => {
+}
+
+let formAutor;
+
+document.addEventListener('DOMContentLoaded', () => {
   formAutor = document.getElementById('form-autor');
   cargarAutores();
 
   formAutor.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const formData = new FormData(formAutor);
-    let url = '/publicaciones/autores/crear/';
+
+    // ✅ usar la URL que viene de Django (autores/nuevo/)
+    let url = formAutor.dataset.endpoint;
+
+    // si estamos editando, cambia a /autores/<id>/editar/
     const autorId = document.getElementById('autor-id').value;
-    if (autorId) {
-      url = `/publicaciones/autores/${autorId}/editar/`;
-    }
+    if (autorId) url = `/publicaciones/autores/${autorId}/editar/`;
+
+    const formData = new FormData(formAutor);
+
+    // ✅ CSRF desde el hidden del form
+    const csrf = formAutor.querySelector('input[name=csrfmiddlewaretoken]')?.value;
+
     try {
       const response = await fetch(url, {
         method: 'POST',
-        body: formData,
         headers: {
+          'X-CSRFToken': csrf,
           'X-Requested-With': 'XMLHttpRequest',
+          // NO pongas Content-Type con FormData
         },
+        body: formData,
       });
-      const data = await response.json();
-      if (!response.ok || !data.success) throw new Error('Error al guardar');
+
+      const data = await response.json().catch(() => ({}));
+
+      // ✅ usa la misma clave que devuelve tu vista: success
+      if (!response.ok || !data?.success) {
+        const msg = data?.mensaje || (data?.errores ? JSON.stringify(data.errores) : 'Error al guardar');
+        throw new Error(msg);
+      }
+
       const modalEl = document.getElementById('modalAutor');
       let modal = bootstrap.Modal.getInstance(modalEl);
       if (!modal) modal = new bootstrap.Modal(modalEl);
       modal.hide();
+
       formAutor.reset();
       formAutor.dataset.editando = 'false';
       formAutor.dataset.autorId = '';
       document.getElementById('autor-id').value = '';
       document.getElementById('modalAutorLabel').textContent = 'Nuevo autor';
+
       cargarAutores();
     } catch (err) {
-      alert('Error al guardar autor');
       console.error(err);
+      alert(err.message || 'Error al guardar autor');
     }
   });
 });
 
+// Evento de edición (sin cambios)
+document.addEventListener('click', function (e) {
+  const link = e.target.closest('.editar-autor');
+  if (link) {
+    e.preventDefault();
+    document.getElementById('autor-id').value = link.dataset.id;
+    document.getElementById('nombre').value = link.dataset.nombre;
+    document.getElementById('apellidos').value = link.dataset.apellidos;
+    document.getElementById('notas').value = link.dataset.notas;
+    const imagen = link.dataset.fotoUrl;
+    const imgTag = document.querySelector('#modalAutor img');
+    if (imgTag) imgTag.src = imagen;
+    formAutor.dataset.editando = 'true';
+    formAutor.dataset.autorId = link.dataset.id;
+    document.getElementById('modalAutorLabel').textContent = 'Editar autor';
+    const modalEl = document.getElementById('modalAutor');
+    const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+    modal.show();
+  }
+});
 
-    // Evento de edición
-  document.addEventListener('click', function (e) {
-    const link = e.target.closest('.editar-autor');
-    if (link) {
-      e.preventDefault();
-      document.getElementById('autor-id').value = link.dataset.id;
-      document.getElementById('nombre').value = link.dataset.nombre;
-      document.getElementById('apellidos').value = link.dataset.apellidos;
-      document.getElementById('notas').value = link.dataset.notas;
-      const imagen = link.dataset.fotoUrl;
-      const imgTag = document.querySelector('#modalAutor img');
-      if (imgTag) imgTag.src = imagen;
-      formAutor.dataset.editando = 'true';
-      formAutor.dataset.autorId = link.dataset.id;
-      document.getElementById('modalAutorLabel').textContent = 'Editar autor';
-      const modalEl = document.getElementById('modalAutor');
-      const modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
-      modal.show();
+// Estado interno para saber qué autor se intenta borrar
+let autorPendienteBorrado = { id: null, nombre: '' };
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('.borrar-autor');
+  if (!btn) return;
+
+  e.preventDefault();
+  autorPendienteBorrado.id = btn.dataset.id;
+  autorPendienteBorrado.nombre = btn.dataset.nombre || 'este autor';
+
+  // Textos del modal
+  document.getElementById('textoConfirmBorrarAutor').textContent =
+    `¿Seguro que quieres eliminar a ${autorPendienteBorrado.nombre}? Esta acción no se puede deshacer.`;
+
+  // Abrir modal de confirmación
+  const m = new bootstrap.Modal(document.getElementById('modalConfirmBorrarAutor'));
+  m.show();
+});
+
+// Click en “Eliminar” del modal de confirmación
+document.getElementById('btnConfirmBorrarAutor')?.addEventListener('click', async () => {
+  if (!autorPendienteBorrado.id) return;
+
+  const csrf = document.querySelector('input[name=csrfmiddlewaretoken]')?.value;
+
+  try {
+    const resp = await fetch(`/publicaciones/autores/${autorPendienteBorrado.id}/eliminar/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': csrf,
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+    const data = await resp.json().catch(() => ({}));
+
+    // Cerrar modal de confirmación
+    const mConfirmEl = document.getElementById('modalConfirmBorrarAutor');
+    bootstrap.Modal.getInstance(mConfirmEl)?.hide();
+
+    if (resp.status === 409 && data?.bloqueado) {
+      // Mostrar modal de bloqueo con el mensaje del backend
+      document.getElementById('textoBloqueoBorrarAutor').textContent =
+        data.mensaje || 'No se puede eliminar porque hay publicaciones vinculadas.';
+      const mBloq = new bootstrap.Modal(document.getElementById('modalBloqueoBorrarAutor'));
+      mBloq.show();
+      return;
     }
-  });
+
+    if (!resp.ok || !data?.success) {
+      // Error genérico
+      document.getElementById('textoBloqueoBorrarAutor').textContent =
+        data?.mensaje || 'No se pudo eliminar el autor. Inténtalo de nuevo.';
+      const mBloq = new bootstrap.Modal(document.getElementById('modalBloqueoBorrarAutor'));
+      mBloq.show();
+      return;
+    }
+
+    // OK → refrescar lista
+    autorPendienteBorrado = { id: null, nombre: '' };
+    cargarAutores();
+  } catch (err) {
+    console.error(err);
+    document.getElementById('textoBloqueoBorrarAutor').textContent =
+      'Error de red al eliminar. Revisa tu conexión.';
+    const mBloq = new bootstrap.Modal(document.getElementById('modalBloqueoBorrarAutor'));
+    mBloq.show();
+  }
+});
+
 </script>
 {% endblock %}
